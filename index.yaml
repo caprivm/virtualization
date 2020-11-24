@@ -3,7 +3,7 @@ entries:
   orc8r:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2020-11-24T13:54:38.296126803Z"
+    created: "2020-11-24T15:59:04.722811692Z"
     dependencies:
     - condition: secrets.create
       name: secrets
@@ -22,7 +22,7 @@ entries:
       repository: ""
       version: 0.1.10
     description: A Helm chart for magma orchestrator
-    digest: b1e7a45645e081efbc95ddbf268cb487411bbfc9733ff058115de850d54f949a
+    digest: d6d2d8de6befda5da9777252b3876e8637db9c702ea74ac3c5e2ccf05a46bc4f
     keywords:
     - magma
     - or8cr
@@ -32,4 +32,4 @@ entries:
     urls:
     - orc8r-1.4.36.tgz
     version: 1.4.36
-generated: "2020-11-24T13:54:38.287976319Z"
+generated: "2020-11-24T15:59:04.71702928Z"
