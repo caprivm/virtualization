@@ -3,26 +3,10 @@ entries:
   orc8r:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2020-12-21T19:05:52.663435209Z"
-    dependencies:
-    - condition: secrets.create
-      name: secrets
-      repository: ""
-      version: 0.1.5
-    - condition: metrics.enabled
-      name: metrics
-      repository: ""
-      version: 1.4.15
-    - condition: nms.enabled
-      name: nms
-      repository: ""
-      version: 0.1.7
-    - condition: logging.enabled
-      name: logging
-      repository: ""
-      version: 0.1.10
+    created: "2020-12-21T19:21:38.678407972Z"
     description: A Helm chart for magma orchestrator
-    digest: 2355ef931adaa2db28caeb189683a30202af291dbaca10c1cfe514b730b4654c
+    digest: 89374e20dc9d69fa8d2a1230e567e4e4451e7d0f2a37b91c073cc3f8627a44da
+    engine: gotpl
     keywords:
     - magma
     - or8cr
@@ -32,4 +16,4 @@ entries:
     urls:
     - orc8r-1.4.36.tgz
     version: 1.4.36
-generated: "2020-12-21T19:05:52.658105347Z"
+generated: "2020-12-21T19:21:38.675904143Z"
