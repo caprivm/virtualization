@@ -15,7 +15,7 @@ nms:
   magmalte:
     create: true
     image:
-      repository: caprivm/magmalte
+      repository: docker.io/caprivm/magmalte
       tag: 1.3.2
   nginx:
     create: true
@@ -96,7 +96,7 @@ nginx:
 
   # nginx image
   image:
-    repository: caprivm/nginx
+    repository: docker.io/caprivm/nginx
     tag: 1.3.2
     pullPolicy: IfNotPresent
 
@@ -142,7 +142,7 @@ controller:
 
   # orc8r_base image
   image:
-    repository: caprivm/controller
+    repository: docker.io/caprivm/controller
     tag: 1.3.2
     pullPolicy: IfNotPresent
 
