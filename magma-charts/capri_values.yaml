@@ -14,11 +14,24 @@ nms:
   enabled: true
   magmalte:
     create: true
+    env:
+      api_host: orc8r-nginx-proxy.magma.svc.cluster.local:443
+      host: 0.0.0.0
+      port: 8081
+      mapbox_access_token: ""
+      mysql_host: mysql-mariadb-primary.magma.svc.cluster.local
+      mysql_db: magma
+      mysql_user: root
+      mysql_pass: magma
+      mysql_dialect: mariadb
+      grafana_address: orc8r-user-grafana:3000
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.3.2
   nginx:
     create: true
+  secrets:
+    certs: orc8r-secrets-certs
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -27,11 +40,11 @@ imagePullSecrets: []
 
 ## metrics sub-chart configuration.
 metrics:
-  enabled: true
+  enabled: false
   prometheus:
-    create: false
+    create: true
   prometheusCache:
-    create: false
+    create: true
   alertmanager:
     create: false
   alertmanagerConfigurer:
@@ -46,11 +59,11 @@ secrets:
   create: false
 
 # Define which secrets should be mounted by pods.
-#secret:
-#  certs: orc8r-secrets-certs
-#  configs:
-#    orc8r: orc8r-secrets-configs-orc8r
-#  envdir: orc8r-secrets-envdir
+secret:
+  certs: orc8r-secrets-certs
+  configs:
+    orc8r: orc8r-secrets-configs-orc8r
+  envdir: orc8r-secrets-envdir
 ## Secrets
 secret:
   certs:
@@ -400,7 +413,7 @@ nginx:
     hostname: "magma-test"
     # when nginx sees a variable in a server_name it needs a resolver
     # by default we'll use kube-dns
-    resolver: "kube-dns.kube-system.svc.cluster.local valid=10s"
+    resolver: "coredns.kube-system.svc.cluster.local valid=10s"
 
   # Number of nginx replicas desired
   replicas: 1
@@ -453,6 +466,12 @@ controller:
       pass: postgres
     service_registry:
       mode: "yaml"
+  
+  secret:
+    certs: orc8r-secrets-certs
+    configs:
+      orc8r: orc8r-secrets-configs-orc8r
+    envdir: orc8r-secrets-envdir
 
   podAnnotations: {}
 
