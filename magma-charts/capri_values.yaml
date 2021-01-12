@@ -26,6 +26,9 @@ nms:
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
 
+  secret:
+    certs: orc8r-secrets-certs
+
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.3.2
@@ -54,8 +57,6 @@ nms:
   nginx:
     create: true
     labels: {}
-    secrets:
-      certs: orc8r-secrets-certs
   
     image:
       repository: docker.io/caprivm/nginx
@@ -73,8 +74,8 @@ nms:
 
     deployment:
       spec:
-        ssl_cert_name: admin_operator.pem
-        ssl_cert_key_name: admin_operator.key.pem
+        ssl_cert_name: nms_nginx.pem
+        ssl_cert_key_name: nms_nginx.key.pem
   
     replicas: 1
 
@@ -106,12 +107,12 @@ metrics:
 
 # secrets sub-chart configuration.
 secrets:
+  # create: false
   create: true
   # orc8r secret configuration
   secret:
     certs:
       enabled: true
-      name: orc8r-secrets-certs
       files:
         admin_operator.key.pem: |-
           -----BEGIN RSA PRIVATE KEY-----
