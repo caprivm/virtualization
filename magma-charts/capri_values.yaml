@@ -12,6 +12,9 @@
 ## Global values for NMS sub-chart
 nms:
   enabled: true
+  secret:
+    certs: orc8r-secrets-certs
+
   magmalte:
     create: true
     env:
@@ -25,10 +28,7 @@ nms:
       mysql_pass: magma
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
-
-  secret:
-    certs: orc8r-secrets-certs
-
+    
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.3.2
