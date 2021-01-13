@@ -595,7 +595,7 @@ nginx:
     resolver: "coredns.kube-system.svc.cluster.local valid=10s"
 
   # Number of nginx replicas desired
-  replicas: 1
+  replicas: 2
 
   # Resource limits & requests
   resources: {}
@@ -669,7 +669,7 @@ controller:
   podAnnotations: {}
 
   # Number of controller replicas desired
-  replicas: 1
+  replicas: 2
 
   # Resource limits & requests
   resources: {}
