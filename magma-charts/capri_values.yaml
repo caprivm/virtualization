@@ -64,9 +64,7 @@ nms:
       pullPolicy: Always
   
     service:
-      # type: LoadBalancer
-      type: ClusterIP
-      # loadBalancerIP: 10.253.1.177
+      type: LoadBalancer
       annotations: {}
       https:
         port: 443
@@ -371,50 +369,51 @@ secrets:
           -----END RSA PRIVATE KEY-----
         nms_nginx.pem: |-
           -----BEGIN CERTIFICATE-----
-          MIIC6DCCAdACCQDgPPQNZtGApDANBgkqhkiG9w0BAQsFADA2MQswCQYDVQQGEwJV
-          UzEnMCUGA1UEAwweY2VydGlmaWVyLm9ucHJlbS5mYm1hZ21hLm5pbmphMB4XDTIx
-          MDEwNTE4NDEwMloXDTMxMDEwMzE4NDEwMlowNjELMAkGA1UEBhMCVVMxJzAlBgNV
-          BAMMHmNlcnRpZmllci5vbnByZW0uZmJtYWdtYS5uaW5qYTCCASIwDQYJKoZIhvcN
-          AQEBBQADggEPADCCAQoCggEBALQlh7KwsxMW2SOThCLBkGce3HbtwWtx4co6AVzT
-          FV+nQZDUzRbl1uvsJmmibL40H3uWwirAJoraAsq6a9QhC3Div1iK9nNJv72SDsmt
-          lGcVVLfafQMLtbOMRR2msLqpfVBf2RLdlD8Q3+s5OfCVRpOEgCz9hrtXWhSzdt1C
-          jigXqQx2B9Zw3c5Xvd+06xYt2Pz7RMiQzLvf9gZgS30N8QarJBo/NzfTLS0/7ega
-          8hrMwHijjIPdg8Yy18OKwrp02MLSn6ukDG0sTbTg8hzMOOGcLm8fXQ7Fi9Wg3CFo
-          98p52m2D6PFs6exhjVIe/IGXT/c1l8/WVBoq+1ZoLF1NYS0CAwEAATANBgkqhkiG
-          9w0BAQsFAAOCAQEATp1wa0DG1dpDLohumkfkGGYSGpPVtrbAlOvWAlmqVsZSGJxc
-          1RkI+1aJWRzCGID3KtRBdZ/anDbtd/Y+mtLIuSzeotn/Wbn87t53dAAw13+JItVv
-          GqAN6hZw/Jiz8nuKIVIJLQnroRmeufc1bXFPVnXZIiL63V2tft/enIsaMINSVzJ2
-          B1t6mABoLTUjjonuAO4sl57za7hVmWemt3+jZeeps8sFelUaNCjxcj9E+HYpsdDz
-          QiDoVxrvflUAy9GbXr1josiMDf3s2FNqCCZr4djpM+N4antHjpOMlsbsuRkjraAk
-          0R8S08vzqiGS15gT5xVBnCg10nYoGMXFdf2ICg==
+          MIIDKzCCAhOgAwIBAgIJAKFMlPo6YQDCMA0GCSqGSIb3DQEBCwUAMCwxCzAJBgNV
+          BAYTAlVTMR0wGwYDVQQDDBRjZXJ0aWZpZXIubWFnbWEudGVzdDAeFw0yMTAxMTMx
+          ODM5MDFaFw0zMTAxMTExODM5MDFaMCwxCzAJBgNVBAYTAlVTMR0wGwYDVQQDDBRj
+          ZXJ0aWZpZXIubWFnbWEudGVzdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+          ggEBALBGBW4QUuyExVTGLURav/nokHecKLXI47NNO0ZncKiP+pnmDaokcRqKlxkj
+          IYpDDR+QQBlwX46P++A5nL1Il4+GjHTGFIOzvSItBsK4BIWXRy0e4vr86D0FM8Ba
+          v4gFwMOQBKitpifACR8whuYGHWZ2I9EDK8ZNbMlq9FQHlAM30xaI2pnL8LvMd5if
+          JaanvxK434Buyy2uzjBgPr29H0a4S9ojvddDhW3X+bQX3VLm7meZgjIg/sbNi6QQ
+          Xqq69k/dejJlDC5xTPeq8f/DEWPJaF0T8u0Cxk1X6Jsb15Pr2letZ9Ux1I+mVhcS
+          kjNhy5j4+7cdpK9UyEKoN9FR+dcCAwEAAaNQME4wHQYDVR0OBBYEFLBOcPcOGfxp
+          e8EICCfrguj472GWMB8GA1UdIwQYMBaAFLBOcPcOGfxpe8EICCfrguj472GWMAwG
+          A1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAH9E33j8uHBuTQeuAHcFg1zc
+          xLJObibaqTuBt2SBbK8o52BeIO00+NBcengaVrOnFaTAz6L41IA07wqwx0YrTq/P
+          EYmZbxfIolnJ15EpETAxiwcESTPykLtnBOr41klm5B4mc7BBj4MxnWr1mT6zQ1R+
+          kfTjWcFIegVe/0jR3hZU/B0IxrKXzw5HTbQAyPjcsG7nXJptvdWi8p9EeTHCcM3X
+          2gWdhfX3E5WR4SDB9eJSJvOi4Sbr7sQS7L64eznbMEaaK8WIRmwVMrvdExBJTlN0
+          /7mmV/Op+vM1d7/tboGLJ3pt9WifSaK4H0jB/47udbCmJZ7gzwYCEPw1+XiAn1M=
           -----END CERTIFICATE-----
         nms_nginx.key.pem: |-
           -----BEGIN RSA PRIVATE KEY-----
-          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
+          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
           -----END RSA PRIVATE KEY-----
         rootCA.key: |-
           -----BEGIN RSA PRIVATE KEY-----
@@ -561,8 +560,7 @@ nginx:
       clientcertLegacy: {}
       proxy: {}
     labels: {}
-    # type: LoadBalancer
-    type: ClusterIP
+    type: LoadBalancer
     port:
       clientcert:
         port: 8443
@@ -580,7 +578,6 @@ nginx:
         port: 80
         targetPort: 80
         nodePort: ""
-    # loadBalancerIP: "10.253.1.178"
     loadBalancerSourceRanges: []
 
   # nginx image
