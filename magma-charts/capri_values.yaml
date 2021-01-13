@@ -59,9 +59,9 @@ nms:
     labels: {}
   
     image:
-      repository: docker.io/caprivm/nginx
-      tag: 1.3.2
-      pullPolicy: IfNotPresent
+      repository: nginx
+      tag: latest
+      pullPolicy: Always
   
     service:
       type: LoadBalancer
@@ -74,8 +74,8 @@ nms:
 
     deployment:
       spec:
-        ssl_cert_name: admin_operator.pem   # Debería ser el nms_* certifier.
-        ssl_cert_key_name: admin_operator.key.pem
+        ssl_cert_name: nms_nginx.pem   # Debería ser el nms_* certifier.
+        ssl_cert_key_name: nms_nginx.key.pem
   
     replicas: 1
 
@@ -302,6 +302,53 @@ secrets:
           +6VySQKBgEakuR5sJoVAMPXmWGMk5nFsK+VZH1sq6ePB5sT0aqoHsybGf3UmgG/L
           4d/ZxwLQ0JFOpdU4E67AD/brNUfimp8BTv9ldwT9IvKSpVbn/YpsYNmb8NpeSrsG
           IdkYu/GcduqPoawIx7MONoM7feZFQUsXQ1+taj7c9sFmjyzU+wLw
+          -----END RSA PRIVATE KEY-----
+        nms_nginx.pem: |-
+          -----BEGIN CERTIFICATE-----
+          MIIC6DCCAdACCQDgPPQNZtGApDANBgkqhkiG9w0BAQsFADA2MQswCQYDVQQGEwJV
+          UzEnMCUGA1UEAwweY2VydGlmaWVyLm9ucHJlbS5mYm1hZ21hLm5pbmphMB4XDTIx
+          MDEwNTE4NDEwMloXDTMxMDEwMzE4NDEwMlowNjELMAkGA1UEBhMCVVMxJzAlBgNV
+          BAMMHmNlcnRpZmllci5vbnByZW0uZmJtYWdtYS5uaW5qYTCCASIwDQYJKoZIhvcN
+          AQEBBQADggEPADCCAQoCggEBALQlh7KwsxMW2SOThCLBkGce3HbtwWtx4co6AVzT
+          FV+nQZDUzRbl1uvsJmmibL40H3uWwirAJoraAsq6a9QhC3Div1iK9nNJv72SDsmt
+          lGcVVLfafQMLtbOMRR2msLqpfVBf2RLdlD8Q3+s5OfCVRpOEgCz9hrtXWhSzdt1C
+          jigXqQx2B9Zw3c5Xvd+06xYt2Pz7RMiQzLvf9gZgS30N8QarJBo/NzfTLS0/7ega
+          8hrMwHijjIPdg8Yy18OKwrp02MLSn6ukDG0sTbTg8hzMOOGcLm8fXQ7Fi9Wg3CFo
+          98p52m2D6PFs6exhjVIe/IGXT/c1l8/WVBoq+1ZoLF1NYS0CAwEAATANBgkqhkiG
+          9w0BAQsFAAOCAQEATp1wa0DG1dpDLohumkfkGGYSGpPVtrbAlOvWAlmqVsZSGJxc
+          1RkI+1aJWRzCGID3KtRBdZ/anDbtd/Y+mtLIuSzeotn/Wbn87t53dAAw13+JItVv
+          GqAN6hZw/Jiz8nuKIVIJLQnroRmeufc1bXFPVnXZIiL63V2tft/enIsaMINSVzJ2
+          B1t6mABoLTUjjonuAO4sl57za7hVmWemt3+jZeeps8sFelUaNCjxcj9E+HYpsdDz
+          QiDoVxrvflUAy9GbXr1josiMDf3s2FNqCCZr4djpM+N4antHjpOMlsbsuRkjraAk
+          0R8S08vzqiGS15gT5xVBnCg10nYoGMXFdf2ICg==
+          -----END CERTIFICATE-----
+        nms_nginx.key.pem: |-
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEpAIBAAKCAQEAtCWHsrCzExbZI5OEIsGQZx7cdu3Ba3HhyjoBXNMVX6dBkNTN
+          FuXW6+wmaaJsvjQfe5bCKsAmitoCyrpr1CELcOK/WIr2c0m/vZIOya2UZxVUt9p9
+          Awu1s4xFHaawuql9UF/ZEt2UPxDf6zk58JVGk4SALP2Gu1daFLN23UKOKBepDHYH
+          1nDdzle937TrFi3Y/PtEyJDMu9/2BmBLfQ3xBqskGj83N9MtLT/t6BryGszAeKOM
+          g92DxjLXw4rCunTYwtKfq6QMbSxNtODyHMw44Zwubx9dDsWL1aDcIWj3ynnabYPo
+          8Wzp7GGNUh78gZdP9zWXz9ZUGir7VmgsXU1hLQIDAQABAoIBAQCO9sHMM6LJ4XYN
+          X8KbepXI4JsB3wmC5WvU+1edfP8XXDsSX28rXtfDfzO03WwDPoZFpI0PNFLiGsXg
+          cTWlsVvNCIXmFNIlCEAch88oipKdhDYpekF/q0lV5lnrgB/84wlKQeaZrDM8IX4y
+          xMWQgkbyR1MZYVINVvNsPkh0q575fQiQe3EsAV140usZfw2otWdf8Phe4NSBZBzJ
+          5bxlSJ1GiOcUBUOFXxgh0cVDC6OyIOfU1/d6+OcDtCba8dKpGkVZltirKPeiZ+sQ
+          c+TShhDHXqLRBBR9VfGOorNgdZxEqePM5ctuslvqORt2eWedkEVnwq/pMxziA3Xb
+          cmUEfwCZAoGBANlRbxvaZzRFS4UOtXYfHaRKbMemcBd/6NTzka/EVT3LVz/OpLFX
+          40HcfyZnuTi2GH+/vJitCQsF/sORzZpBzDeDVzLOXUpc3ahZXlYs8ro+gTIa5xao
+          Bjx6pvPWPF4G+vW3gtcltDXOjVGeY03AjvuimceMAQrV5S9YqYOrfk2PAoGBANQ2
+          S/2oXmT1lCvrGqahbD/QnANmYcgTN4eK1ebE6d6UiReRzST2+D/4ueSRTLF1xWbX
+          Kha4/XkcrzzYf1GB6uYyp3KQbI5dXssKGnDTq8L9FbfTEYzUf7OqYPUBuKlEWzSm
+          /mFiXAHLcn24QdmAvX+Yix6JiQrABe2Lui/4Ur+DAoGAE2G87BoFfFb1zk8qhfdu
+          eFme7At/Ecl5pYx3oNp8078P8APpElwJS7VzraQwk8tB0hryohdEqDQHrb+SO8DE
+          iuru2vwmu9wedMZLsJnfqBatBR/7Hj0sGTbDLxobVjN/LG0KgU++i9H5Lp9WsfeL
+          iQvOdUqaSTIcd6WLsM+ZuycCgYEAhWXgXQKy28oYK4dtyGNetbq/5887FlcmJ/kZ
+          Pyh3TyiWCQ/pIhxxr1z+FfVUfZVn0p7c4U3GYJSsf5Ykaqs9axlac0TgSJnfFckz
+          F8unhDotpdFzjdCiueEXc8xyNU03/CAhdjwrVCF8xhTGqCAqfwP4J+kTEYPl9g5I
+          qxDxi1sCgYBs/883GBe9diYHtdHiuT09efBhxwhSp/G88dTscnWmfV0dmDOzDZyG
+          1rWkcWLn5u27f3GnFJ/4Xgn5DVNHpO977Z1JJ8e4VZHx8EWXa3vUBDAt6Pam0+Os
+          d4IhUt0E2gcokB3XZ7pbtTByxfYNSzd5OQraBqZI2ed3IAP+/SKzWQ==
           -----END RSA PRIVATE KEY-----
         rootCA.key: |-
           -----BEGIN RSA PRIVATE KEY-----
