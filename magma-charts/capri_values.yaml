@@ -90,7 +90,7 @@ imagePullSecrets: []
 
 # Metrics sub-chart configuration.
 metrics:
-  enabled: false
+  enabled: true
 
   metrics:
     volumes:
