@@ -74,7 +74,7 @@ nms:
 
     deployment:
       spec:
-        ssl_cert_name: admin_operator.pem
+        ssl_cert_name: admin_operator.pem   # Debería ser el nms_* certifier.
         ssl_cert_key_name: admin_operator.key.pem
   
     replicas: 1
@@ -478,7 +478,7 @@ nginx:
   # Settings affecting nginx application
   spec:
     # magma controller domain name
-    hostname: "orc8r"
+    hostname: "controller.magma.test"
     # when nginx sees a variable in a server_name it needs a resolver
     # by default we'll use kube-dns
     resolver: "coredns.kube-system.svc.cluster.local valid=10s"
