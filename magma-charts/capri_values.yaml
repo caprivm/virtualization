@@ -32,7 +32,7 @@ nms:
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.3.2
-      pullPolicy: Always
+      pullPolicy: IfNotPresent
     
     deployment:
       spec:
@@ -61,7 +61,7 @@ nms:
     image:
       repository: docker.io/caprivm/nginx
       tag: 1.3.2
-      pullPolicy: Always
+      pullPolicy: IfNotPresent
   
     service:
       type: LoadBalancer
@@ -74,8 +74,8 @@ nms:
 
     deployment:
       spec:
-        ssl_cert_name: nms_nginx.pem
-        ssl_cert_key_name: nms_nginx.key.pem
+        ssl_cert_name: admin_operator.pem
+        ssl_cert_key_name: admin_operator.key.pem
   
     replicas: 1
 
@@ -484,7 +484,7 @@ nginx:
     resolver: "coredns.kube-system.svc.cluster.local valid=10s"
 
   # Number of nginx replicas desired
-  replicas: 2
+  replicas: 1
 
   # Resource limits & requests
   resources: {}
@@ -558,7 +558,7 @@ controller:
   podAnnotations: {}
 
   # Number of controller replicas desired
-  replicas: 2
+  replicas: 1
 
   # Resource limits & requests
   resources: {}
