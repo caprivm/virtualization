@@ -23,9 +23,9 @@ nms:
       port: 8081
       mapbox_access_token: ""
       mysql_host: mariadb.mariadb.svc.cluster.local
-      mysql_db: borrar
+      mysql_db: magma
       mysql_user: root
-      mysql_pass: root
+      mysql_pass: magma
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
     
