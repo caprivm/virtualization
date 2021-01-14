@@ -22,7 +22,7 @@ nms:
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
-      mysql_host: mariadb.mariadb.svc.cluster.local
+      mysql_host: mariadb-master-0.mariadb-master.mariadb.svc.cluster.local
       mysql_db: borrar
       mysql_user: root
       mysql_pass: root
