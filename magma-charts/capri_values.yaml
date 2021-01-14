@@ -22,10 +22,10 @@ nms:
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
-      mysql_host: mysql-mariadb-primary.magma.svc.cluster.local
-      mysql_db: magma
+      mysql_host: mariadb.mariadb.svc.cluster.local:3306
+      mysql_db: borrar
       mysql_user: root
-      mysql_pass: magma
+      mysql_pass: root
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
     
@@ -90,7 +90,7 @@ imagePullSecrets: []
 
 # Metrics sub-chart configuration.
 metrics:
-  enabled: true
+  enabled: false
 
   metrics:
     volumes:
