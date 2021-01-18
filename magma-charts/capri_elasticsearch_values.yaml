@@ -49,7 +49,7 @@ data:
   initResources: {}
   updateStrategy:
     type: OnDelete
-  # storageClass: "hdd"
+  storageClass: managed-nfs-storage
 
 master:
   name: master
@@ -67,4 +67,4 @@ master:
   initResources: {}
   updateStrategy:
     type: OnDelete
-  # storageClass: "hdd"
+  storageClass: managed-nfs-storage
