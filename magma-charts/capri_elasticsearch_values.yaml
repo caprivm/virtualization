@@ -8,14 +8,14 @@ roles:
   data: "true"
   remote_cluster_client: "true"
 
-# image:
-#   repository: docker.elastic.co/elasticsearch/elasticsearch
-#   tag: 7.10.2
-#   pullPolicy: IfNotPresent
+image:
+  repository: docker.elastic.co/elasticsearch/elasticsearch
+  tag: 7.10.2
+  pullPolicy: IfNotPresent
 
-# protocol: http
-# httpPort: 9200
-# transportPort: 9300
+protocol: http
+httpPort: 9200
+transportPort: 9300
 
 rbac:
   create: true
@@ -36,13 +36,13 @@ service:
 data:
   name: data
   replicas: 1
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    name: data
-    size: "30Gi"
+  # persistence:
+  #   enabled: true
+  #   type: pvc
+  #   accessMode: ReadWriteOnce
+  #   name: data
+  #   size: "30Gi"
   
-  antiAffinity: "soft"
   nodeAffinity: {}
   nodeSelector: {}
   tolerations: []
@@ -54,13 +54,13 @@ data:
 master:
   name: master
   replicas: 1
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    name: data
-    size: "4Gi"
+  # persistence:
+  #   enabled: true
+  #   type: pvc
+  #   accessMode: ReadWriteOnce
+  #   name: data
+  #   size: "4Gi"
   
-  antiAffinity: "soft"
   nodeAffinity: {}
   nodeSelector: {}
   tolerations: []
