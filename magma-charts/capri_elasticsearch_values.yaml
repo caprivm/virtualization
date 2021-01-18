@@ -27,11 +27,11 @@ service:
   annotations:
     external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
 
-volumeClaimTemplate:
-  accessModes: [ "ReadWriteOnce" ]
-  resources:
-    requests:
-      storage: 4Gi
+# volumeClaimTemplate:
+#   accessModes: [ "ReadWriteOnce" ]
+#   resources:
+#     requests:
+#       storage: 4Gi
 
 data:
   storageClass: "hdd"
