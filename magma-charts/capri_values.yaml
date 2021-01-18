@@ -367,6 +367,54 @@ secrets:
           4d/ZxwLQ0JFOpdU4E67AD/brNUfimp8BTv9ldwT9IvKSpVbn/YpsYNmb8NpeSrsG
           IdkYu/GcduqPoawIx7MONoM7feZFQUsXQ1+taj7c9sFmjyzU+wLw
           -----END RSA PRIVATE KEY-----
+        fluentd.pem: |-
+          -----BEGIN CERTIFICATE-----
+          MIIDJzCCAg+gAwIBAgIJALQ34iHgKf27MA0GCSqGSIb3DQEBCwUAMCoxCzAJBgNV
+          BAYTAlVTMRswGQYDVQQDDBJmbHVlbnRkLm1hZ21hLnRlc3QwHhcNMjEwMTE4MTUz
+          OTM1WhcNMzEwMTE2MTUzOTM1WjAqMQswCQYDVQQGEwJVUzEbMBkGA1UEAwwSZmx1
+          ZW50ZC5tYWdtYS50ZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+          6+0QX61CfLky5PtopfSojKogci8SavM4FxeizxZKN7zZAsYLlIhiobCYQUZer7Az
+          6d0nSQF8A+1KDb8IZb85NW66ggxVNwoyQED4DklcPm5sSX58J4crsYPn1yasFpo4
+          G2UeK3/Lwq5wCZ5s20Sw0kySv46iUziLVQNVFdDv66lMb6tSdS7z7tadmTChG7v6
+          NnmS7KphL3+0/31yMJ2nQ/9r9eSbHruJb8IJpoplfkWbRGLW5xUl1d9NC9ubokVZ
+          kN5LqM1xXGXkKEmlkufLhdU4dU5mFTPQl++u3S9BjWzd26O8gjw6bVsstbqThX7X
+          B4nAD26/C1AN+2+wi3wBUQIDAQABo1AwTjAdBgNVHQ4EFgQU/4Wz8Y60iwsexGF9
+          030ePL9Sdm4wHwYDVR0jBBgwFoAU/4Wz8Y60iwsexGF9030ePL9Sdm4wDAYDVR0T
+          BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEApRkJ0MzJ/6f2TuGiBlvYS+SXyaXp
+          nxbWz3uZPsExHtz0ZnapBUTMx6P205dnJ41suPulE5WuTk4MKpStxGlEvCNQfO+f
+          46JilvaGQi+0rpTn7YBaKo2w9Fn78XZr/ZfajjOtE25o8LuC+aK+9/nP0CC+KA7p
+          MW/ET9Ncroanc1QvLYgtVhDNL6zQqYeyOWvUTC6U5zAdj2iC4JRRLNYWx02dglZm
+          IdxEF94AbAysTeYnwLMxEE7lneeN1NOU7kmMdJJTRapgYiHkdZskCgXj1ebPUGRJ
+          N/XkiHYKmmXoAj0hGqrfFtE+xE004wZ7r/RS4/GK7P6qi8K6Y7c25ZCIyw==
+          -----END CERTIFICATE-----
+        fluentd.key: |-
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEpAIBAAKCAQEA6+0QX61CfLky5PtopfSojKogci8SavM4FxeizxZKN7zZAsYL
+          lIhiobCYQUZer7Az6d0nSQF8A+1KDb8IZb85NW66ggxVNwoyQED4DklcPm5sSX58
+          J4crsYPn1yasFpo4G2UeK3/Lwq5wCZ5s20Sw0kySv46iUziLVQNVFdDv66lMb6tS
+          dS7z7tadmTChG7v6NnmS7KphL3+0/31yMJ2nQ/9r9eSbHruJb8IJpoplfkWbRGLW
+          5xUl1d9NC9ubokVZkN5LqM1xXGXkKEmlkufLhdU4dU5mFTPQl++u3S9BjWzd26O8
+          gjw6bVsstbqThX7XB4nAD26/C1AN+2+wi3wBUQIDAQABAoIBAGm19jE4m+LwxKov
+          MCu0HVWx4Qnop5L+WfKW559suGKTHpWMkaHDHpaeXwpYcpK8G/a83h5rKNtFlnnk
+          T+nvLb4QWEdvKTuZOPzrX3pfSpK6vZCMuSqo+V334YjYziDuhxdXTpZlE7KuoIre
+          zp3NAIGqR9LHIVqyqlO0Q4qb7PSlMdpfwiuBNrC23CY5SdkETXHZFG3fE2pY3I/P
+          sgdSxkpK45izNQ5r5HfH3RJA40EuAW3xESX1/Ls1btslJ1JgusDM9aYS0/YUCvXV
+          mrKB9JeTJ3MZhF7vR7r9aVTJaK46zfcco1NZ+BuMnqZKCVg7aW6l7WPIh5m9kH++
+          m7keRbECgYEA9xgBWAIeY5n5HhkpJk1D+lCplIf1LfICaXMQ7GtEiG4B6AjSqOK3
+          1209NK+duEj7RTiPTrPLu3tRJ1q+IxJ2abxXHUwbQIIPvqFtNto2Llbh6MLjW9Cj
+          EkMLXk1hBo9yKK5qaRLHPck8VMIbRZ88Jnksy8Z082GhNE/cpafa8q0CgYEA9G4C
+          4Nn+PvEypYbVhFvPZGMeUkA8kZBS+rpkFcW5hqOOT675d/YAcc4+YldReg9Uni2h
+          POdnw9dDSVEUPk3rFe5sL8qiApr+FBMgZG7z00XqXdgEv9Su9Cu3ViF3RASroFU+
+          DBRsKRATfb1xieku4HyDtqk4vm97KzAwhtDiwbUCgYEAy3mpIaAdBkg1LOPrTu8x
+          m1/xRa7v5/XypoNq3EU5Gl/8kecyEoEggvYiANDdQHRY9pes61KD4s+Z9J51FMyP
+          VmMSGb4icuynqoOkPBdVprNFNTfHokQdBVzQb8eoro5Ro859MimUiPy+Ac4WRy7p
+          iYUfrm6uv/0Vks5xFLk1Q8ECgYEAiHmkQcd1nc8uaB2QugZJFdQB6grTxrK+oh/Q
+          Ihf0LqjDnNolkEVamjB9xIrcgzpsFKWFkWvjFAXtG9KZavA2glhNL6IEM1A27R6A
+          x5LrsNsosJ0cib9GsC54fy7QWLoC2dK+giAlBAhl2Z8c9dOsyMq9ABAcDrhQHR0a
+          +ytGcMECgYAHVCbMqu3YdjRZh+Kp5ux24BNhQ/C4NxxbKfl8oG04L9NuXDtSZiHu
+          XBew6dRD8s2mfJQGgbEl/PmZQ+5uxCMZ9UWlyUP3NtrTc1LlU8hVz8fbPtQLAllW
+          F3ooiX4AQCD/Gq4Oin59cZrVky+IsgIpappFA20vQabtjsGlx556Cw==
+          -----END RSA PRIVATE KEY-----
         nms_nginx.pem: |-
           -----BEGIN CERTIFICATE-----
           MIIDKzCCAhOgAwIBAgIJAKFMlPo6YQDCMA0GCSqGSIb3DQEBCwUAMCwxCzAJBgNV
