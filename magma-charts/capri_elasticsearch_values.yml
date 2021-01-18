@@ -1,0 +1,40 @@
+clusterName: "es-magma"
+replicas: 1
+minimumMasterNodes: 1
+
+roles:
+  master: "true"
+  ingest: "true"
+  data: "true"
+  remote_cluster_client: "true"
+
+image:
+  repository: docker.elastic.co/elasticsearch/elasticsearch
+  tag: 7.10.2
+  pullPolicy: IfNotPresent
+
+protocol: http
+httpPort: 9200
+transportPort: 9300
+
+rbac:
+  create: true
+
+antiAffinity: "soft"
+
+service:
+  type: LoadBalancer
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
+
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 4Gi
+
+data:
+  storageClass: "hdd"
+
+master:
+  storageClass: "hdd"
