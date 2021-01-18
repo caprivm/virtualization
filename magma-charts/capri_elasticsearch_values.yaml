@@ -8,14 +8,14 @@ roles:
   data: "true"
   remote_cluster_client: "true"
 
-image:
-  repository: docker.elastic.co/elasticsearch/elasticsearch
-  tag: 7.10.2
-  pullPolicy: IfNotPresent
+# image:
+#   repository: docker.elastic.co/elasticsearch/elasticsearch
+#   tag: 7.10.2
+#   pullPolicy: IfNotPresent
 
-protocol: http
-httpPort: 9200
-transportPort: 9300
+# protocol: http
+# httpPort: 9200
+# transportPort: 9300
 
 rbac:
   create: true
@@ -25,7 +25,7 @@ antiAffinity: "soft"
 service:
   type: LoadBalancer
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
+    external-dns.alpha.kubernetes.io/hostname: elasticsearch-client.magma.test
 
 # volumeClaimTemplate:
 #   accessModes: [ "ReadWriteOnce" ]

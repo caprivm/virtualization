@@ -50,7 +50,7 @@ configMaps:
       @type elasticsearch
       @log_level info
       include_tag_key true
-      host elasticsearch.magma.test
+      host elasticsearch-client.magma.svc.cluster.local
       port 9200
       scheme http
       ssl_verify false
