@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 configMaps:
-  general.conf: |
+  general.conf: |-
     # Prevent fluentd from handling records containing its own logs. Otherwise
     # it can lead to an infinite loop, when error in sending one message generates
     # another message which also fails to be sent and so on.
