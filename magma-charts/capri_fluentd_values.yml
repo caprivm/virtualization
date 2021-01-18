@@ -1,0 +1,112 @@
+replicaCount: 1
+
+image:
+  repository: gcr.io/google-containers/fluentd-elasticsearch
+  tag: v2.4.0
+  pullPolicy: IfNotPresent
+
+configMaps:
+  general.conf: |
+    # Prevent fluentd from handling records containing its own logs. Otherwise
+    # it can lead to an infinite loop, when error in sending one message generates
+    # another message which also fails to be sent and so on.
+    <match fluentd.**>
+      @type null
+    </match>
+
+    # Used for health checking
+    <source>
+      @type http
+      port 9880
+      bind 0.0.0.0
+    </source>
+
+    # Emits internal metrics to every minute, and also exposes them on port
+    # 24220. Useful for determining if an output plugin is retryring/erroring,
+    # or determining the buffer queue length.
+    <source>
+      @type monitor_agent
+      bind 0.0.0.0
+      port 24220
+      tag fluentd.monitor.metrics
+    </source>
+
+  forward-input.conf: |-
+    <source>
+      @type forward
+      port 24224
+      bind 0.0.0.0
+      <transport tls>
+        ca_path /certs/certifier.pem
+        cert_path /certs/fluentd.pem
+        private_key_path /certs/fluentd.key
+        client_cert_auth true
+      </transport>
+    </source>
+
+  output.conf: |-
+    <match **>
+      @id elasticsearch
+      @type elasticsearch
+      @log_level info
+      include_tag_key true
+      host elasticsearch.magma.test
+      port 9200
+      scheme http
+      ssl_verify false
+      ssl_version TLSv1_2
+      logstash_format true
+      logstash_prefix "magma"
+      reconnect_on_error true
+      reload_on_failure true
+      reload_connections false
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffers/kubernetes.system.buffer
+        flush_mode interval
+        retry_type exponential_backoff
+        flush_thread_count 2
+        flush_interval 5s
+        retry_forever
+        retry_max_interval 30
+        chunk_limit_size 16M
+        queue_limit_length nil
+        overflow_action block
+      </buffer>
+    </match>
+
+extraVolumeMounts:
+- mountPath: /certs
+  name: certs
+  readOnly: true
+
+extraVolumes:
+- name: certs
+  secret:
+    defaultMode: 420
+    secretName: fluentd-certs
+
+output:
+  host: elasticsearch-client.default.svc.cluster.local
+  port: 9200
+  scheme: http
+
+rbac:
+  create: false
+
+service:
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: fluentd.magma.test
+  ports:
+  - containerPort: 24224
+    name: forward
+    protocol: TCP
+  type: LoadBalancer
+
+env: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
