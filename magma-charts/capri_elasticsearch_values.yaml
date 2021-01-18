@@ -34,7 +34,37 @@ service:
 #       storage: 4Gi
 
 data:
-  storageClass: "hdd"
+  name: data
+  replicas: 1
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    name: data
+    size: "30Gi"
+  
+  antiAffinity: "soft"
+  nodeAffinity: {}
+  nodeSelector: {}
+  tolerations: []
+  initResources: {}
+  updateStrategy:
+    type: OnDelete
+  # storageClass: "hdd"
 
 master:
-  storageClass: "hdd"
+  name: master
+  replicas: 1
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    name: data
+    size: "4Gi"
+  
+  antiAffinity: "soft"
+  nodeAffinity: {}
+  nodeSelector: {}
+  tolerations: []
+  initResources: {}
+  updateStrategy:
+    type: OnDelete
+  # storageClass: "hdd"
