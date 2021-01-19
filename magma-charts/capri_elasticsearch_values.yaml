@@ -1,6 +1,7 @@
 clusterName: "es-magma"
-replicas: 1
-minimumMasterNodes: 1
+nodeGroup: "master"
+replicas: 3
+minimumMasterNodes: 2
 
 # roles:
 #   master: "true"
@@ -8,10 +9,20 @@ minimumMasterNodes: 1
 #   data: "true"
 #   remote_cluster_client: "true"
 
-# image:
-#   repository: docker.elastic.co/elasticsearch/elasticsearch
-#   tag: 7.10.2
-#   pullPolicy: IfNotPresent
+image:
+  repository: "docker.elastic.co/elasticsearch/elasticsearch"
+  tag: "8.0.0-SNAPSHOT"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+networkHost: "0.0.0.0"
 
 rbac:
   create: true
@@ -19,7 +30,8 @@ rbac:
 antiAffinity: "soft"
 
 service:
-#   type: LoadBalancer
+  type: ClusterIP
+  httpPortName: http
   annotations:
     external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
 
