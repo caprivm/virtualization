@@ -13,9 +13,9 @@ image:
   tag: 7.10.2
   pullPolicy: IfNotPresent
 
-protocol: http
-httpPort: 9200
-transportPort: 9300
+# protocol: http
+# httpPort: 9200
+# transportPort: 9300
 
 rbac:
   create: true
@@ -23,7 +23,7 @@ rbac:
 antiAffinity: "soft"
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   annotations:
     external-dns.alpha.kubernetes.io/hostname: elasticsearch-client.magma.test
 
@@ -38,33 +38,24 @@ data:
   replicas: 1
   persistence:
     enabled: true
-    type: pvc
     accessMode: ReadWriteOnce
     name: data
     size: "30Gi"
     storageClass: managed-nfs-storage
-  
-  nodeAffinity: {}
-  nodeSelector: {}
-  tolerations: []
-  initResources: {}
-  updateStrategy:
-    type: OnDelete
 
 master:
   name: master
   replicas: 1
   persistence:
     enabled: true
-    type: pvc
     accessMode: ReadWriteOnce
     name: data
     size: "4Gi"
-  
-  nodeAffinity: {}
-  nodeSelector: {}
-  tolerations: []
-  initResources: {}
-  updateStrategy:
-    type: OnDelete
-  storageClass: managed-nfs-storage
+    storageClass: managed-nfs-storage
+
+  # nodeAffinity: {}
+  # nodeSelector: {}
+  # tolerations: []
+  # initResources: {}
+  # updateStrategy:
+  #   type: OnDelete
