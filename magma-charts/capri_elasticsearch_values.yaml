@@ -3,11 +3,11 @@ replicas: 2
 clusterHealthCheckParams: 'wait_for_status=green&timeout=1s'
 minimumMasterNodes: 1
 
-# roles:
-#   master: "true"
-#   ingest: "true"
-#   data: "true"
-#   remote_cluster_client: "true"
+roles:
+  master: "true"
+  ingest: "true"
+  data: "true"
+  remote_cluster_client: "true"
 
 image: "docker.elastic.co/elasticsearch/elasticsearch"
 imageTag: "8.0.0-SNAPSHOT"
@@ -21,6 +21,8 @@ resources:
     cpu: "1000m"
     memory: "2Gi"
 
+esJavaOpts: "-Xmx1g -Xms1g"
+
 networkHost: "0.0.0.0"
 
 rbac:
@@ -32,13 +34,17 @@ service:
   type: LoadBalancer
   httpPortName: http
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: elasticsearch-client.magma.test
+    external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
 
-# volumeClaimTemplate:
-#   accessModes: [ "ReadWriteOnce" ]
-#   resources:
-#     requests:
-#       storage: 4Gi
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 30Gi
+
+protocol: http
+httpPort: 9200
+transportPort: 9300
 
 data:
   # name: data
