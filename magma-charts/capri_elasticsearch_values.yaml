@@ -1,7 +1,6 @@
 clusterName: "es-magma"
-nodeGroup: "master"
 replicas: 1
-# minimumMasterNodes: 2
+minimumMasterNodes: 1
 
 # roles:
 #   master: "true"
