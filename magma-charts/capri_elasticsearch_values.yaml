@@ -36,12 +36,13 @@ service:
 data:
   name: data
   replicas: 1
-  # persistence:
-  #   enabled: true
-  #   type: pvc
-  #   accessMode: ReadWriteOnce
-  #   name: data
-  #   size: "30Gi"
+  persistence:
+    enabled: true
+    type: pvc
+    accessMode: ReadWriteOnce
+    name: data
+    size: "30Gi"
+    storageClass: managed-nfs-storage
   
   nodeAffinity: {}
   nodeSelector: {}
@@ -49,17 +50,16 @@ data:
   initResources: {}
   updateStrategy:
     type: OnDelete
-  storageClass: managed-nfs-storage
 
 master:
   name: master
   replicas: 1
-  # persistence:
-  #   enabled: true
-  #   type: pvc
-  #   accessMode: ReadWriteOnce
-  #   name: data
-  #   size: "4Gi"
+  persistence:
+    enabled: true
+    type: pvc
+    accessMode: ReadWriteOnce
+    name: data
+    size: "4Gi"
   
   nodeAffinity: {}
   nodeSelector: {}
