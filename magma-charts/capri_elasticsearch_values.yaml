@@ -9,10 +9,9 @@ minimumMasterNodes: 1
 #   data: "true"
 #   remote_cluster_client: "true"
 
-image:
-  repository: "docker.elastic.co/elasticsearch/elasticsearch"
-  tag: "8.0.0-SNAPSHOT"
-  pullPolicy: IfNotPresent
+image: "docker.elastic.co/elasticsearch/elasticsearch"
+imageTag: "8.0.0-SNAPSHOT"
+imagePullPolicy: "IfNotPresent"
 
 resources:
   requests:
