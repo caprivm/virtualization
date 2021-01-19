@@ -1,7 +1,7 @@
 clusterName: "es-magma"
-replicas: 3
-clusterHealthCheckParams: 'wait_for_status=green&timeout=1s'
-minimumMasterNodes: 2
+replicas: 1
+clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
+minimumMasterNodes: 1
 
 roles:
   master: "true"
@@ -35,12 +35,6 @@ service:
   httpPortName: http
   annotations:
     external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
-
-volumeClaimTemplate:
-  accessModes: [ "ReadWriteOnce" ]
-  resources:
-    requests:
-      storage: 30Gi
 
 protocol: http
 httpPort: 9200
