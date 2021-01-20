@@ -20,6 +20,8 @@ protocol: http
 
 serverHost: "0.0.0.0"
 
+healthCheckPath: "/api/status"
+
 service:
   type: LoadBalancer
   port: 5601
