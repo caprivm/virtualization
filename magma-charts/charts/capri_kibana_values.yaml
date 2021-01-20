@@ -2,7 +2,7 @@ image: "docker.elastic.co/kibana/kibana"
 imageTag: "8.0.0-SNAPSHOT"
 imagePullPolicy: "IfNotPresent"
 
-elasticsearchHosts: http://elasticsearch.magma.test:9200
+elasticsearchHosts: http://elasticsearch-client:9200
 
 extraEnvs:
   - name: "LOGGING_VERBOSE"
