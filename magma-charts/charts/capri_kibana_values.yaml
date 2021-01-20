@@ -2,7 +2,7 @@ image: "docker.elastic.co/kibana/kibana"
 imageTag: "8.0.0-SNAPSHOT"
 imagePullPolicy: "IfNotPresent"
 
-elasticsearchHosts: elasticsearch.magma.test
+elasticsearchHosts: "http://elasticsearch.magma.test:9200"
 
 extraEnvs:
   - name: "LOGGING_VERBOSE"
@@ -32,9 +32,9 @@ files:
   kibana.yml:
     ## Default Kibana configuration from kibana-docker.
     server.name: kibana
-    server.host: "0"
+    server.host: "0.0.0.0"
     ## For kibana < 6.6, use elasticsearch.url instead
-    elasticsearch.hosts: elasticsearch.magma.test
+    elasticsearch.hosts: "http://elasticsearch.magma.test:9200"
 
 dashboardImport:
   enabled: true
