@@ -50,7 +50,7 @@ configMaps:
       @type elasticsearch
       @log_level info
       include_tag_key true
-      host elasticsearch-client.magma.svc.cluster.local
+      host elasticsearch.magma.svc.cluster.local
       port 9200
       scheme http
       ssl_verify false
@@ -87,7 +87,7 @@ extraVolumes:
     secretName: fluentd-certs
 
 output:
-  host: elasticsearch-client.default.svc.cluster.local
+  host: elasticsearch.magma.svc.cluster.local
   port: 9200
   scheme: http
 
