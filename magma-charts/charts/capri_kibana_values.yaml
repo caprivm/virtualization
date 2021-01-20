@@ -35,6 +35,7 @@ files:
     server.host: "0.0.0.0"
     ## For kibana < 6.6, use elasticsearch.url instead
     elasticsearch.hosts: "http://elasticsearch-master:9200"
+    elasticsearch.requestTimeout: 90000
 
 dashboardImport:
   enabled: true
