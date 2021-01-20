@@ -33,9 +33,8 @@ files:
     ## Default Kibana configuration from kibana-docker.
     server.name: kibana
     server.host: "0.0.0.0"
-    ## For kibana < 6.6, use elasticsearch.url instead
     elasticsearch.hosts: "http://elasticsearch-master:9200"
-    elasticsearch.requestTimeout: 30000
+    # elasticsearch.requestTimeout: 30000
 
 dashboardImport:
   enabled: true
