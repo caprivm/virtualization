@@ -1,0 +1,41 @@
+image: "docker.elastic.co/kibana/kibana"
+imageTag: "8.0.0-SNAPSHOT"
+imagePullPolicy: "IfNotPresent"
+
+extraEnvs:
+  - name: "LOGGING_VERBOSE"
+    value: "false"
+
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+protocol: http
+
+serverHost: "0.0.0.0"
+
+service:
+  type: LoadBalancer
+  port: 5601
+  nodePort: ""
+  labels: {}
+  annotations: {}
+  httpPortName: http
+
+files:
+  kibana.yml:
+    ## Default Kibana configuration from kibana-docker.
+    server.name: kibana
+    server.host: "0"
+    ## For kibana < 6.6, use elasticsearch.url instead
+    elasticsearch.hosts: http://elasticsearch-client:9200
+
+dashboardImport:
+  enabled: true
+  timeout: 60
+  dashboards:
+    k8s: https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json
