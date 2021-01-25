@@ -14,7 +14,6 @@ nms:
   enabled: true
   secret:
     certs: orc8r-secrets-certs
-
   magmalte:
     create: true
     env:
@@ -28,41 +27,29 @@ nms:
       mysql_pass: magma
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
-    
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.3.2
       pullPolicy: IfNotPresent
-    
     deployment:
       spec:
         operator_cert_name: admin_operator.pem
         operator_key_name: admin_operator.key.pem
-
-    labels: {}
-    resources: {}
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
-
     service:
-      type: ClusterIP
+      type: LoadBalancer
       http:
         port: 8081
         targetport: 8081
         nodePort: ""
-  
     replicas: 1
 
   nginx:
     create: true
     labels: {}
-  
     image:
       repository: nginx
       tag: latest
-      pullPolicy: Always
-  
+      pullPolicy: IfNotPresent
     service:
       type: LoadBalancer
       annotations: {}
@@ -70,18 +57,11 @@ nms:
         port: 443
         targetport: 443
         nodePort: ""
-
     deployment:
       spec:
         ssl_cert_name: nms_nginx.pem   # Debería ser el nms_* certifier.
         ssl_cert_key_name: nms_nginx.key.pem
-  
     replicas: 1
-
-    resources: {}
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
