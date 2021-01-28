@@ -1,0 +1,15 @@
+dependencies:
+- name: secrets
+  repository: ""
+  version: 0.1.5
+- name: metrics
+  repository: ""
+  version: 1.4.15
+- name: nms
+  repository: ""
+  version: 0.1.7
+- name: logging
+  repository: ""
+  version: 0.1.10
+digest: sha256:5430b4b46ef8bd7bbbd154a67f1c5a40eb4d208a35696468fc87103558934f44
+generated: "2021-01-12T21:28:58.429265036Z"
