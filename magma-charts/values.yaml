@@ -390,6 +390,17 @@ nginx:
 
 controller:
   # Service configuration.
+  secret:
+    certs: orc8r-secrets-certs
+    configs:
+      orc8r: orc8r-secrets-configs-orc8r
+    envdir: orc8r-secrets-envdir
+  
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: ""
+
   service:
     annotations: {}
     labels: {}
@@ -422,6 +433,8 @@ controller:
     new_handlers: 0
     new_mconfigs: 0
     mconfig_whitelist: ""
+
+  podAnnotations: {}
 
   # Number of controller replicas desired
   replicas: 1
