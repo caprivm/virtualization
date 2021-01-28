@@ -323,6 +323,8 @@ proxyserviceloadBalancerIP: ""
 nginxserviceloadBalancerIP: ""
 
 nginx:
+  # Enable/Disable chart
+  create: true
   # Service configuration.
   service:
     name: bootstrapper-orc8r-nginx
@@ -331,15 +333,15 @@ nginx:
     type: LoadBalancer
     port:
       clientcert:
-        port: 7443
+        port: 8443
         targetPort: 8443
         nodePort: ""
       open:
-        port: 7444
+        port: 8444
         targetPort: 8444
         nodePort: ""
       api:
-        port: 9443
+        port: 443
         targetPort: 9443
         nodePort: ""
       health:
