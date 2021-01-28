@@ -1,11 +1,11 @@
 replicaCount: 1
 
-image:
-  repository: quay.io/fluentd_elasticsearch/fluentd
-  tag: v3.1.0
-  pullPolicy: IfNotPresent
+# image:
+#   repository: quay.io/fluentd_elasticsearch/fluentd
+#   tag: v3.1.0
+#   pullPolicy: IfNotPresent
 
-fluentConfDir: "/etc/fluent/config.d"
+# fluentConfDir: "/etc/fluent/config.d"
 
 configMaps:
   general.conf: |-
