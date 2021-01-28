@@ -1,9 +1,11 @@
 replicaCount: 1
 
 image:
-  repository: gcr.io/google-containers/fluentd-elasticsearch
-  tag: v2.4.0
+  repository: quay.io/fluentd_elasticsearch/fluentd
+  tag: v3.1.0
   pullPolicy: IfNotPresent
+
+fluentConfDir: "/etc/fluent/config.d"
 
 configMaps:
   general.conf: |-
@@ -50,7 +52,7 @@ configMaps:
       @type elasticsearch
       @log_level info
       include_tag_key true
-      host elasticsearch.magma.svc.cluster.local
+      host elasticsearch-master
       port 9200
       scheme http
       ssl_verify false
@@ -87,7 +89,7 @@ extraVolumes:
     secretName: fluentd-certs
 
 output:
-  host: elasticsearch.magma.svc.cluster.local
+  host: elasticsearch-master
   port: 9200
   scheme: http
 
