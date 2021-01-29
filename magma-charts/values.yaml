@@ -25,7 +25,7 @@ nms:
       rbac: true
 
     env:
-      api_host: orc8r-proxy:9443
+      api_host: nginx-proxy.magma.svc.cluster.local:443
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
@@ -34,6 +34,7 @@ nms:
       mysql_user: root
       mysql_pass: magma
       mysql_dialect: mariadb
+      grafana_address: orc8r-user-grafana:3000
 
     image:
       repository: docker.io/caprivm/magmalte
@@ -128,24 +129,6 @@ metrics:
 
   userGrafana:
     create: true
-    # Service configuration.
-    service:
-      annotations: {}
-      labels: {}
-      type: LoadBalancer
-      ports:
-        - name: grafana
-          port: 3000
-          targetPort: 3000
-
-    environment:
-      prometheusHost: "orc8r-prometheus"
-      prometheusPort: "9090"
-
-    image:
-      repository: grafana/grafana
-      tag: latest
-      pullPolicy: IfNotPresent
     
     volumes:
       # Default volume configurations for grafana data.
@@ -202,7 +185,7 @@ metrics:
     service:
       annotations: {}
       labels: {}
-      type: ClusterIP
+      type: LoadBalancer
       ports:
         - name: orc8r-prometheus-cache
           port: 9091
@@ -214,11 +197,11 @@ metrics:
       pullPolicy: IfNotPresent
 
     # Maximum number of datapoints in the cache at one time. Unlimited if <= 0.
-    limit: 0
+    limit: 500000
     replicas: 1
 
   alertmanager:
-    create: false
+    create: true
     service:
       annotations: {}
       labels: {}
@@ -252,10 +235,10 @@ metrics:
 
   alertmanagerConfigurer:
     # Enable/Disable chart
-    create: false
+    create: true
     image:
-      repository: docker.io/prom/alertmanager
-      tag: v0.18.0
+      repository: docker.io/facebookincubator/alertmanager-configurer
+      tag: 1.0.0
       pullPolicy: IfNotPresent
 
   prometheusConfigurer:
@@ -391,7 +374,7 @@ nginx:
   affinity: {}
 
 controller:
-  # Service configuration.
+  # Define which secrets should be mounted by pods.
   secret:
     certs: orc8r-secrets-certs
     configs:
@@ -403,6 +386,7 @@ controller:
     minAvailable: 1
     maxUnavailable: ""
 
+  # Service configuration.
   service:
     annotations: {}
     labels: {}
@@ -466,8 +450,8 @@ controller:
 cloudwatch:
   create: false
 
-postgresql:
-  create: true
+# postgresql:
+#   create: true
 
 # logging sub-chart configuration.
 logging:
