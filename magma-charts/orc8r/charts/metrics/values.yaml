@@ -11,9 +11,9 @@ metrics:
         # hostPath:
         #   path: /prometheusData
         #   type: DirectoryOrCreate
-    prometheusConfig:
-      volumeSpec:
-        emptyDir: {}
+    # prometheusConfig:
+      # volumeSpec:
+        # emptyDir: {}
         # hostPath:
         #   path: /configs/prometheus
         #   type: DirectoryOrCreate
