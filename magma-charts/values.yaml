@@ -13,78 +13,29 @@
 nms:
   enabled: true
   secret:
-    certs: orc8r-secrets-certs
+    certs: orc8r-certs
 
   magmalte:
     create: true
-
     manifests:
       secrets: true
       deployment: true
       service: true
       rbac: true
-
-    env:
-      api_host: nginx-proxy.magma.svc.cluster.local:443
-      host: 0.0.0.0
-      port: 8081
-      mapbox_access_token: ""
-      mysql_host: mariadb
-      mysql_db: magma
-      mysql_user: magma
-      mysql_pass: password
-      mysql_dialect: mariadb
-      grafana_address: orc8r-user-grafana:3000
 
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.4.0
       pullPolicy: IfNotPresent
     
-    deployment:
-      spec:
-        operator_cert_name: admin_operator.pem
-        operator_key_name: admin_operator.key.pem
-    
-    service:
-      type: LoadBalancer
-      http:
-        port: 8081
-        targetport: 8081
-        nodePort: ""
-    
-    replicas: 1
-  
   nginx:
     create: true
-    labels: {}
-    
     manifests:
       configmap: true
       secrets: true
       deployment: true
       service: true
       rbac: true
-
-    image:
-      repository: nginx
-      tag: latest
-      pullPolicy: IfNotPresent
-    
-    service:
-      type: LoadBalancer
-      annotations: {}
-      https:
-        port: 443
-        targetport: 443
-        nodePort: ""
-    
-    deployment:
-      spec:
-        ssl_cert_name: controller.crt
-        ssl_cert_key_name: controller.key
-
-    replicas: 1
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -117,11 +68,9 @@ metrics:
         - name: grafana
           port: 3000
           targetPort: 3000
-    
     environment:
       prometheusHost: "orc8r-prometheus"
       prometheusPort: "9090"
-
     image:
       repository: docker.io/grafana/grafana
       tag: latest
@@ -376,10 +325,10 @@ nginx:
 controller:
   # Define which secrets should be mounted by pods.
   secret:
-    certs: orc8r-secrets-certs
+    certs: orc8r-certs
     configs:
-      orc8r: orc8r-secrets-configs-orc8r
-    envdir: orc8r-secrets-envdir
+      orc8r: orc8r-configs-orc8r
+    envdir: orc8r-envdir
   
   podDisruptionBudget:
     enabled: false
