@@ -83,6 +83,6 @@ spec:
             defaultMode: 0555
         - name: orc8r-secrets-certs
           secret:
-            secretName: {{ required "secret.certs must be provided" .Values.secret.certs }}
+            secretName: orc8r-secrets-certs
             defaultMode: 0444
 {{- end }}
