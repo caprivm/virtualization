@@ -12,6 +12,9 @@
 ## Global values for NMS sub-chart
 nms:
   enabled: true
+  secret:
+      certs: orc8r-secrets-certs
+  
   magmalte:
     create: true
     manifests:
@@ -24,7 +27,7 @@ nms:
       repository: docker.io/caprivm/magmalte
       tag: 1.4.0
       pullPolicy: IfNotPresent
-    
+   
   nginx:
     create: true
     manifests:
