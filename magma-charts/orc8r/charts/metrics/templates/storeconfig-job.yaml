@@ -27,6 +27,7 @@ spec:
       labels:
 {{ include "metrics.labels" . | indent 8 }}
     spec:
+      storageClassName: managed-nfs-storage
       restartPolicy: OnFailure
       containers:
         - name: storeconfig

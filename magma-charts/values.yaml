@@ -66,17 +66,21 @@ metrics:
     volumes:
       # Default volume configurations for grafana data.
       dashboards:
-        persistentVolumeClaim:
-          claimName: grafanadashboards
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: grafanadashboards
       datasources:
-        persistentVolumeClaim:
-          claimName: grafanadatasources
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: grafanadatasources
       dashboardproviders:
-        persistentVolumeClaim:
-          claimName: grafanaproviders
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: grafanaproviders
       grafanaData:
-        persistentVolumeClaim:
-          claimName: grafanadata
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: grafanadata
 
   prometheus:
     create: true

@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: elasticsearch-master-elasticsearch-master-0
+  name: configs
   namespace: magma
 spec:
   accessModes:
   - ReadWriteMany
   resources:
     requests:
-      storage: 40Gi
+      storage: 20Gi
   storageClassName: managed-nfs-storage
