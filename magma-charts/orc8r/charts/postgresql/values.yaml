@@ -40,7 +40,7 @@ image:
 
 ## String to fully override common.names.fullname template
 ##
-# fullnameOverride:
+fullnameOverride: postgresql
 
 ##
 ## Init containers parameters:
@@ -141,7 +141,7 @@ postgresqlUsername: postgres
 ## PostgreSQL password
 ## ref: https://github.com/bitnami/bitnami-docker-postgresql/blob/master/README.md#setting-the-root-password-on-first-run
 ##
-# postgresqlPassword:
+postgresqlPassword: postgres
 
 ## PostgreSQL password using existing secret
 ## existingSecret: secret
@@ -153,7 +153,7 @@ postgresqlUsername: postgres
 ## Create a database
 ## ref: https://github.com/bitnami/bitnami-docker-postgresql/blob/master/README.md#creating-a-database-on-first-run
 ##
-# postgresqlDatabase:
+postgresqlDatabase: magma
 
 ## PostgreSQL data dir
 ## ref: https://github.com/bitnami/bitnami-docker-postgresql/blob/master/README.md
@@ -385,7 +385,7 @@ shmVolume:
 ##   GKE, AWS & OpenStack)
 ##
 persistence:
-  enabled: true
+  enabled: false
   ## A manually managed Persistent Volume and Claim
   ## If defined, PVC must be created manually before volume will be bound
   ## The value is evaluated as a template, so, for example, the name can depend on .Release or .Chart
@@ -420,25 +420,12 @@ updateStrategy:
   type: RollingUpdate
 
 ##
-## PostgreSQL Primary parameters
+## PostgreSQL Master parameters
 ##
-primary:
-  ## PostgreSQL Primary pod affinity preset
-  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-  ## Allowed values: soft, hard
-  ##
+master:
+
   podAffinityPreset: ""
-
-  ## PostgreSQL Primary pod anti-affinity preset
-  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-  ## Allowed values: soft, hard
-  ##
   podAntiAffinityPreset: soft
-
-  ## PostgreSQL Primary node affinity preset
-  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-  ## Allowed values: soft, hard
-  ##
   nodeAffinityPreset:
     ## Node affinity type
     ## Allowed values: soft, hard
@@ -456,22 +443,10 @@ primary:
     ##
     values: []
 
-  ## Affinity for PostgreSQL primary pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ## Note: primary.podAffinityPreset, primary.podAntiAffinityPreset, and primary.nodeAffinityPreset will be ignored when it's set
-  ##
+
   affinity: {}
-
-  ## Node labels for PostgreSQL primary pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
   nodeSelector: {}
-
-  ## Tolerations for PostgreSQL primary pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-  ##
   tolerations: []
-
   labels: {}
   annotations: {}
   podLabels: {}
@@ -480,11 +455,11 @@ primary:
   ## Extra init containers
   ## Example
   ##
-  ## extraInitContainers:
-  ##   - name: do-something
-  ##     image: busybox
-  ##     command: ['do', 'something']
-  ##
+  # extraInitContainers: |
+    # - name: do-something
+    #  image: busybox
+    #  command: ['do', 'something']
+
   extraInitContainers: []
 
   ## Additional PostgreSQL primary Volume mounts
@@ -514,25 +489,12 @@ primary:
   # clusterIP:
 
 ##
-## PostgreSQL read only replica parameters
+## PostgreSQL Slave parameters
 ##
-readReplicas:
-  ## PostgreSQL read only pod affinity preset
-  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-  ## Allowed values: soft, hard
-  ##
+slave:
+
   podAffinityPreset: ""
-
-  ## PostgreSQL read only pod anti-affinity preset
-  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-  ## Allowed values: soft, hard
-  ##
   podAntiAffinityPreset: soft
-
-  ## PostgreSQL read only node affinity preset
-  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-  ## Allowed values: soft, hard
-  ##
   nodeAffinityPreset:
     ## Node affinity type
     ## Allowed values: soft, hard
@@ -550,20 +512,8 @@ readReplicas:
     ##
     values: []
 
-  ## Affinity for PostgreSQL read only pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ## Note: readReplicas.podAffinityPreset, readReplicas.podAntiAffinityPreset, and readReplicas.nodeAffinityPreset will be ignored when it's set
-  ##
   affinity: {}
-
-  ## Node labels for PostgreSQL read only  pods assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
   nodeSelector: {}
-
-  ## Tolerations for PostgreSQL read only  pods assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-  ##
   tolerations: []
   labels: {}
   annotations: {}
@@ -612,7 +562,7 @@ readReplicas:
   ## Whether to enable PostgreSQL read replicas data Persistent
   ##
   persistence:
-    enabled: true
+    enabled: false
 
   # Override the resource configuration for read replicas
   resources: {}
@@ -636,12 +586,6 @@ networkPolicy:
   ## Enable creation of NetworkPolicy resources. Only Ingress traffic is filtered for now.
   ##
   enabled: false
-
-  ## The Policy model to apply. When set to false, only pods with the correct
-  ## client label will have network access to the port PostgreSQL is listening
-  ## on. When true, PostgreSQL will accept connections from any source
-  ## (with the correct destination port).
-  ##
   allowExternal: true
 
   ## if explicitNamespacesSelector is missing or set to {}, only client Pods that are in the networkPolicy's namespace
@@ -734,7 +678,7 @@ metrics:
   ## ref: https://github.com/coreos/prometheus-operator#customresourcedefinitions
   ##
   prometheusRule:
-    enabled: false
+    enabled: true
     additionalLabels: {}
     namespace: ''
     ## These are just examples rules, please adapt them to your needs.
