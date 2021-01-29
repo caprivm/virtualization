@@ -6,12 +6,14 @@ metrics:
   # alertmanager, and configmanager pods
   volumes:
     prometheusData:
-      volumeSpec: {}
+      volumeSpec:
+        emptyDir: {}
         # hostPath:
         #   path: /prometheusData
         #   type: DirectoryOrCreate
     prometheusConfig:
-      volumeSpec: {}
+      volumeSpec:
+        emptyDir: {}
         # hostPath:
         #   path: /configs/prometheus
         #   type: DirectoryOrCreate
@@ -106,9 +108,14 @@ prometheusConfigurer:
         port: 9100
         targetPort: 9100
 
-  prometheusConfigurerPort: 9100
-  rulesDir: "/etc/configs/alert_rules/"
-  prometheusURL: "orc8r-prometheus:9090"
+  environment:
+    promAlertconfigPort: "9100"
+    rulesDir: "/etc/configs/alert_rules"
+    prometheusURL: "orc8r-prometheus:9090"
+    alertmanagerConfigPort: "9101"
+    alertmanagerConfPath: "/etc/configs/alertmanager.yml"
+    alertmanagerURL: "orc8r-alertmanager:9093"
+    prometheusConfigurerPort: 9100
 
   image:
     repository: docker.io/facebookincubator/prometheus-configurer
@@ -195,23 +202,8 @@ prometheusCache:
 
   # Resource limits & requests
   resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-  # Define which Nodes the Pods are scheduled on.
-  # ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
-
-  # Tolerations for use with node taints
-  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
-
-  # Assign prometheusCache to run on specific nodes
-  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   affinity: {}
 
 grafana:
@@ -269,9 +261,6 @@ grafana:
 userGrafana:
   # Enable/Disable chart
   create: true
-
-  # Reverse proxy setting, root url grafana will be accessed through
-  rootURL: /grafana
 
   # Service configuration.
   service:
