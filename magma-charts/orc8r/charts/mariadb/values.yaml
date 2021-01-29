@@ -73,9 +73,9 @@ auth:
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#creating-a-database-on-first-run
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#creating-a-database-user-on-first-run
   ##
-  database: my_database
-  username: ""
-  password: ""
+  database: magma
+  username: "magma"
+  password: "password"
   ## MariaDB replication user and password
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#setting-up-a-replication-cluster
   ##
@@ -116,7 +116,7 @@ initdbScripts: {}
 
 ## Mariadb Primary parameters
 ##
-primary:
+master:
   ## Command and args for running the container (set to default if not set). Use array form
   ##
   command: []
@@ -316,7 +316,7 @@ primary:
   persistence:
     ## If true, use a Persistent Volume Claim, If false, use emptyDir
     ##
-    enabled: true
+    enabled: false
     ## Name of existing PVC to hold MariaDB Primary data
     ## NOTE: When it's set the rest of persistence parameters are ignored
     ##
@@ -410,7 +410,7 @@ primary:
 
 ## Mariadb Secondary parameters
 ##
-secondary:
+slave:
   ## Number of Mariadb Secondary replicas to deploy
   ##
   replicaCount: 1
@@ -612,7 +612,7 @@ secondary:
   persistence:
     ## If true, use a Persistent Volume Claim, If false, use emptyDir
     ##
-    enabled: true
+    enabled: false
     ## Subdirectory of the volume to mount
     # subPath:
     ## Persistent Volume Storage Class
@@ -706,7 +706,7 @@ secondary:
 serviceAccount:
   ## Specifies whether a ServiceAccount should be created
   ##
-  create: true
+  create: false
   ## The name of the ServiceAccount to use.
   ## If not set and create is true, a name is generated using the mariadb.fullname template
   ##
@@ -800,8 +800,8 @@ metrics:
   ## - --collect.heartbeat.table
   ##
   extraArgs:
-    primary: []
-    secondary: []
+    master: []
+    slave: []
 
   ## Mysqld Prometheus exporter resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
