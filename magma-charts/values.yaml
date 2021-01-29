@@ -450,8 +450,11 @@ controller:
 cloudwatch:
   create: false
 
-# postgresql:
-#   create: true
+mariadb:
+  create: true
+
+postgresql:
+  create: true
 
 # logging sub-chart configuration.
 logging:
