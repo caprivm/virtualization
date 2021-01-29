@@ -115,10 +115,10 @@ rootUser:
   ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
   ## If it is not force, a random password will be generated.
   ##
-  forcePassword: false
+  forcePassword: true
   ## Mount admin password as a file instead of using an environment variable
   ##
-  injectSecretsAsVolume: false
+  injectSecretsAsVolume: true
 
 ## Custom user/db credentials
 ##
@@ -126,19 +126,19 @@ db:
   ## MariaDB username and password
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-user-on-first-run
   ##
-  user: "magma"
-  password: "password"
+  user: ""
+  password: ""
   ## Database to create
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-on-first-run
   ##
-  name: magma
+  name: my_database
   ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
   ## If it is not force, a random password will be generated.
   ##
-  forcePassword: false
+  forcePassword: true
   ## Mount user password as a file instead of using an environment variable
   ##
-  injectSecretsAsVolume: false
+  injectSecretsAsVolume: true
 
 ## Replication configuration
 ##
@@ -146,7 +146,7 @@ replication:
   ## Enable replication. This enables the creation of replicas of MariaDB. If false, only a
   ## master deployment would be created
   ##
-  enabled: false
+  enabled: true
   ## MariaDB replication user
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#setting-up-a-replication-cluster
   ##
@@ -158,10 +158,10 @@ replication:
   ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
   ## If it is not force, a random password will be generated.
   ##
-  forcePassword: false
+  forcePassword: true
   ## Mount replication user password as a file instead of using an environment variable
   ##
-  injectSecretsAsVolume: false
+  injectSecretsAsVolume: true
 
 ## initdb scripts
 ## Specify dictionary of scripts to be run at first boot
@@ -219,7 +219,7 @@ master:
   persistence:
     ## If true, use a Persistent Volume Claim, If false, use emptyDir
     ##
-    enabled: false
+    enabled: true
     # Enable persistence using an existing PVC
     # existingClaim:
     # Subdirectory of the volume to mount
@@ -323,10 +323,9 @@ master:
     ## Add custom annotations to the service
     ##
     annotations: {}
-      # external-dns.alpha.kubernetes.io/hostname: db.example.com
 
 slave:
-  replicas: 1
+  replicas: 2
 
   ## Mariadb Slave additional pod annotations
   ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
@@ -337,7 +336,7 @@ slave:
   ## MariaDB additional command line flags
   ## Can be used to specify command line flags, for example:
   ##
-  ## extraFlags: "--max-connect-errors=1000 --max_connections=155"
+  ## extraFlags: --max-connect-errors=1000 --max_connections=155"
 
   ## Affinity for pod assignment
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -454,10 +453,9 @@ slave:
     ## Add custom annotations to the service
     ##
     annotations: {}
-      # external-dns.alpha.kubernetes.io/hostname: rodb.example.com
 
 metrics:
-  enabled: false
+  enabled: true
   image:
     registry: docker.io
     repository: bitnami/mysqld-exporter

@@ -1,15 +1,10 @@
-annotations:
-  category: Database
 apiVersion: v1
-appVersion: 11.10.0
-dependencies:
-  - name: common
-    repository: https://charts.bitnami.com/bitnami
-    version: 1.x.x
-description: Chart for PostgreSQL, an object-relational database management system (ORDBMS) with an emphasis on extensibility and on standards-compliance.
-engine: gotpl
-home: https://github.com/bitnami/charts/tree/master/bitnami/postgresql
-icon: https://bitnami.com/assets/stacks/postgresql/img/postgresql-stack-220x234.png
+name: postgresql
+version: 8.6.4
+appVersion: 11.7.0
+# The postgresql chart is deprecated and no longer maintained. For details deprecation, see the PROCESSES.md file.
+deprecated: true
+description: DEPRECATED Chart for PostgreSQL, an object-relational database management system (ORDBMS) with an emphasis on extensibility and on standards-compliance.
 keywords:
   - postgresql
   - postgres
@@ -17,13 +12,9 @@ keywords:
   - sql
   - replication
   - cluster
-maintainers:
-  - email: containers@bitnami.com
-    name: Bitnami
-  - email: cedric@desaintmartin.fr
-    name: desaintmartin
-name: postgresql
+home: https://www.postgresql.org/
+icon: https://bitnami.com/assets/stacks/postgresql/img/postgresql-stack-110x117.png
 sources:
   - https://github.com/bitnami/bitnami-docker-postgresql
-  - https://www.postgresql.org/
-version: 10.2.6
+maintainers: []
+engine: gotpl

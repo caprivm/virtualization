@@ -2,13 +2,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.names.fullname" . }}-configuration
+  name: {{ template "postgresql.fullname" . }}-configuration
   labels:
-  {{- include "common.labels.standard" . | nindent 4 }}
-  {{- if .Values.commonAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
-  namespace: {{ .Release.Namespace }}
+    app: {{ template "postgresql.name" . }}
+    chart: {{ template "postgresql.chart" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 data:
 {{- if (.Files.Glob "files/postgresql.conf") }}
 {{ (.Files.Glob "files/postgresql.conf").AsConfig | indent 2 }}

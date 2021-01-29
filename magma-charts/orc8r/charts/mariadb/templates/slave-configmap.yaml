@@ -1,11 +1,15 @@
-{{- if .Values.serviceAccount.create }}
+{{- if and .Values.replication.enabled .Values.slave.config }}
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: {{ template "mariadb.serviceAccountName" . }}
+  name: {{ template "slave.fullname" . }}
   labels:
     app: "{{ template "mariadb.name" . }}"
+    component: "slave"
     chart: "{{ template "mariadb.chart" . }}"
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
+data:
+  my.cnf: |-
+{{ .Values.slave.config | indent 4 }}
 {{- end }}

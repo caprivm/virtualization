@@ -1,29 +1,20 @@
-annotations:
-  category: Database
 apiVersion: v1
-appVersion: 10.5.8
-dependencies:
-  - name: common
-    repository: https://charts.bitnami.com/bitnami
-    tags:
-      - bitnami-common
-    version: 1.x.x
-description: Fast, reliable, scalable, and easy to use open-source relational database system. MariaDB Server is intended for mission-critical, heavy-load production systems as well as for embedding into mass-deployed software. Highly available MariaDB cluster.
-engine: gotpl
-home: https://github.com/bitnami/charts/tree/master/bitnami/mariadb
-icon: https://bitnami.com/assets/stacks/mariadb/img/mariadb-stack-220x234.png
+name: mariadb
+version: 7.3.14
+appVersion: 10.3.22
+# The mariadb chart is deprecated and no longer maintained. For details deprecation, see the PROCESSES.md file.
+deprecated: true
+description: DEPRECATED Fast, reliable, scalable, and easy to use open-source relational database system. MariaDB Server is intended for mission-critical, heavy-load production systems as well as for embedding into mass-deployed software. Highly available MariaDB cluster.
 keywords:
   - mariadb
   - mysql
   - database
   - sql
   - prometheus
-maintainers:
-  - email: containers@bitnami.com
-    name: Bitnami
-name: mariadb
+home: https://mariadb.org
+icon: https://bitnami.com/assets/stacks/mariadb/img/mariadb-stack-220x234.png
 sources:
   - https://github.com/bitnami/bitnami-docker-mariadb
   - https://github.com/prometheus/mysqld_exporter
-  - https://mariadb.org
-version: 9.3.0
+maintainers: []
+engine: gotpl
