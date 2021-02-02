@@ -9,6 +9,6 @@ http:
     status: 200
     timeout: 2000
 
-  http://helm-kibana-default-kibana:5601/app/kibana:
+  http://helm-kibana-upgrade-kibana:5601/app/kibana:
     status: 200
     timeout: 2000

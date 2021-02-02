@@ -44,7 +44,7 @@ imagePullSecrets: []
 
 # Metrics sub-chart configuration.
 metrics:
-  enabled: true
+  enabled: false
 
   metrics:
     create: true
