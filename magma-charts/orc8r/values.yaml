@@ -12,110 +12,36 @@
 ## Global values for NMS sub-chart
 nms:
   enabled: true
-  secret:
-      certs: orc8r-secrets-certs
-  
   magmalte:
     create: true
-    manifests:
-      secrets: true
-      deployment: true
-      service: true
-      rbac: true
-
     image:
-      repository: docker.io/caprivm/magmalte
-      tag: 1.4.0
-      pullPolicy: IfNotPresent
-   
+      repository: <registry>/magmalte
+      tag: latest
   nginx:
     create: true
-    manifests:
-      configmap: true
-      secrets: true
-      deployment: true
-      service: true
-      rbac: true
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # - name: orc8r-secrets-registry
 
-# Metrics sub-chart configuration.
+## metrics sub-chart configuration.
 metrics:
   enabled: true
-
-  metrics:
-    create: true
-    volumes:
-      prometheusConfig:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: promcfg
-      prometheusData:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: promdata
-
-  grafana:
-    create: false
-   
-  userGrafana:
-    create: true 
-    volumes:
-      # Default volume configurations for grafana data.
-      dashboards:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanadashboards
-      datasources:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanadatasources
-      dashboardproviders:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanaproviders
-      grafanaData:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanadata
-
   prometheus:
-    create: true
-
+    create: false
   prometheusCache:
-    create: true
-    image:
-      repository: docker.io/facebookincubator/prometheus-edge-hub
-      tag: "1.0.0"  # Double quote to cast to string
-      pullPolicy: IfNotPresent
-    # Maximum number of datapoints in the cache at one time. Unlimited if <= 0.
-    limit: 500000
-    service:
-      type: LoadBalancer
-
+    create: false
   alertmanager:
-    create: true
-
+    create: false
   alertmanagerConfigurer:
-    create: true
-    image:
-      repository: docker.io/facebookincubator/alertmanager-configurer
-      tag: 1.0.0
-      pullPolicy: IfNotPresent
-
+    create: false
   prometheusConfigurer:
-    create: true
-    image:
-      repository: docker.io/facebookincubator/prometheus-configurer
-      tag: 1.0.0
-      pullPolicy: IfNotPresent
+    create: false
 
-# Secrets sub-chart configuration.
+# secrets sub-chart configuration.
 secrets:
-  create: true
+  create: false
 
 # Define which secrets should be mounted by pods.
 secret:
@@ -124,14 +50,11 @@ secret:
     orc8r: orc8r-secrets-configs-orc8r
   envdir: orc8r-secrets-envdir
 
-proxyserviceloadBalancerIP: ""
-nginxserviceloadBalancerIP: ""
-
 nginx:
-  # Enable/Disable chart
   create: true
-  
-  # Service configuration.
+
+  # Configure pod disruption budgets for nginx
+  # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
     enabled: false
     minAvailable: 1
@@ -143,8 +66,12 @@ nginx:
     legacyEnabled: true
     name: bootstrapper-orc8r-nginx
     annotations: {}
+    extraAnnotations:
+      bootstrapLagacy: {}
+      clientcertLegacy: {}
+      proxy: {}
     labels: {}
-    type: LoadBalancer
+    type: ClusterIP
     port:
       clientcert:
         port: 8443
@@ -167,36 +94,45 @@ nginx:
 
   # nginx image
   image:
-    repository: docker.io/caprivm/nginx
-    tag: 1.4.0
+    repository:
+    tag: latest
     pullPolicy: IfNotPresent
 
   # Settings affecting nginx application
   spec:
     # magma controller domain name
-    hostname: "controller.magma.test"
-    http_proxy_backend: "orc8r-controller"
+    hostname: ""
     # when nginx sees a variable in a server_name it needs a resolver
     # by default we'll use kube-dns
-    resolver: "coredns.kube-system.svc.cluster.local valid=10s"
+    resolver: "kube-dns.kube-system.svc.cluster.local valid=10s"
 
   # Number of nginx replicas desired
   replicas: 1
 
   # Resource limits & requests
   resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # Define which Nodes the Pods are scheduled on.
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
+
+  # Tolerations for use with node taints
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
+
+  # Assign nginx to run on specific nodes
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   affinity: {}
 
 controller:
-  # Define which secrets should be mounted by pods.
-  secret:
-    certs: orc8r-secrets-certs
-    configs:
-      orc8r: orc8r-secrets-configs-orc8r
-    envdir: orc8r-secrets-envdir
-  
+  # Configure pod disruption budgets for controller
+  # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
     enabled: false
     minAvailable: 1
@@ -213,24 +149,24 @@ controller:
     portStart: 9079
     portEnd: 9108
 
-  # Controller image
+  # controller image
   image:
-    repository: docker.io/caprivm/controller
-    tag: 1.4.0
+    repository:
+    tag: latest
     pullPolicy: IfNotPresent
-  
+
   spec:
     # Postgres/mysql configuration
     database:
-      driver: postgres  # mysql/postgres
+      driver: postgres      # mysql/postgres
       sql_dialect: psql # maria/psql
-      db: magma         # DB Name
+      db: magma          # DB Name
       protocol: tcp
       host: postgresql
       port: 5432
       user: postgres
       pass: postgres
-  
+
   migration:
     new_handlers: 0
     new_mconfigs: 0
@@ -243,101 +179,28 @@ controller:
 
   # Resource limits & requests
   resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # Define which Nodes the Pods are scheduled on.
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
+
+  # Tolerations for use with node taints
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
+
+  # Assign proxy to run on specific nodes
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   affinity: {}
 
 # Set True to create a CloudWatch agent to monitor metrics
 cloudwatch:
   create: false
-
-mariadb:
-  create: true
-
-postgresql:
-  create: true
-
-elasticsearch:
-  create: true
-  replicas: 1
-  minimumMasterNodes: 1
-
-  image: "docker.elastic.co/elasticsearch/elasticsearch"
-  imageTag: "7.9.3"
-  imagePullPolicy: "IfNotPresent"
-
-  volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
-    storageClassName: managed-nfs-storage
-    resources:
-      requests:
-        storage: 8Gi
-
-  rbac:
-    create: true
-    serviceAccountAnnotations: {}
-    serviceAccountName: ""
-
-  antiAffinity: "soft"
-
-  nodeAffinity: {}
-
-  protocol: http
-  httpPort: 9200
-  transportPort: 9300
-
-  service:
-    labels: {}
-    labelsHeadless: {}
-    type: LoadBalancer
-    nodePort: ""
-    annotations:
-      external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
-    httpPortName: http
-    transportPortName: transport
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalTrafficPolicy: ""
-
-  # https://www.elastic.co/guide/en/elasticsearch/reference/7.9/cluster-health.html#request-params wait_for_status
-  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
-
-kibana:
-  create: true
-  image: "docker.elastic.co/kibana/kibana"
-  imageTag: "7.9.4-SNAPSHOT"
-  imagePullPolicy: "IfNotPresent"
-
-  replicas: 1
-
-  extraEnvs:
-    - name: "LOGGING_VERBOSE"
-      value: "false"
-
-  protocol: http
-  healthCheckPath: "/app/kibana"
-
-  service:
-    type: LoadBalancer
-    port: 5601
-    nodePort: ""
-    labels: {}
-    annotations: {}
-    httpPortName: http
-
-  files:
-    kibana.yml:
-      ## Default Kibana configuration from kibana-docker.
-      server.name: kibana
-      server.host: "0"
-      elasticsearch.hosts: "http://elasticsearch-master:9200"
-      # elasticsearch.requestTimeout: 30000
-
-  dashboardImport:
-    enabled: true
-    timeout: 60
-    dashboards:
-      k8s: https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json
 
 # logging sub-chart configuration.
 logging:
