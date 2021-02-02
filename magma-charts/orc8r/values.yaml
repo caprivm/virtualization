@@ -257,6 +257,88 @@ mariadb:
 postgresql:
   create: true
 
+elasticsearch:
+  create: true
+  replicas: 1
+  minimumMasterNodes: 1
+
+  image: "docker.elastic.co/elasticsearch/elasticsearch"
+  imageTag: "7.9.3"
+  imagePullPolicy: "IfNotPresent"
+
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: managed-nfs-storage
+    resources:
+      requests:
+        storage: 8Gi
+
+  rbac:
+    create: true
+    serviceAccountAnnotations: {}
+    serviceAccountName: ""
+
+  antiAffinity: "soft"
+
+  nodeAffinity: {}
+
+  protocol: http
+  httpPort: 9200
+  transportPort: 9300
+
+  service:
+    labels: {}
+    labelsHeadless: {}
+    type: LoadBalancer
+    nodePort: ""
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: elasticsearch.magma.test
+    httpPortName: http
+    transportPortName: transport
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: ""
+
+  # https://www.elastic.co/guide/en/elasticsearch/reference/7.9/cluster-health.html#request-params wait_for_status
+  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+
+kibana:
+  create: true
+  image: "docker.elastic.co/kibana/kibana"
+  imageTag: "7.9.4-SNAPSHOT"
+  imagePullPolicy: "IfNotPresent"
+
+  replicas: 1
+
+  extraEnvs:
+    - name: "LOGGING_VERBOSE"
+      value: "false"
+
+  protocol: http
+  healthCheckPath: "/app/kibana"
+
+  service:
+    type: LoadBalancer
+    port: 5601
+    nodePort: ""
+    labels: {}
+    annotations: {}
+    httpPortName: http
+
+  files:
+    kibana.yml:
+      ## Default Kibana configuration from kibana-docker.
+      server.name: kibana
+      server.host: "0"
+      elasticsearch.hosts: "http://elasticsearch-master:9200"
+      # elasticsearch.requestTimeout: 30000
+
+  dashboardImport:
+    enabled: true
+    timeout: 60
+    dashboards:
+      k8s: https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json
+
 # logging sub-chart configuration.
 logging:
   enabled: true
