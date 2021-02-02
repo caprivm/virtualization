@@ -1,5 +1,5 @@
 image: "docker.elastic.co/kibana/kibana"
-imageTag: "8.0.0-SNAPSHOT"
+imageTag: "7.9.4-SNAPSHOT"
 imagePullPolicy: "IfNotPresent"
 
 elasticsearchHosts: "http://elasticsearch-master:9200"
