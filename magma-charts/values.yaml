@@ -258,7 +258,7 @@ postgresql:
   create: true
 
 elasticsearch:
-  create: false
+  create: true
   replicas: 1
   minimumMasterNodes: 1
 
@@ -303,7 +303,7 @@ elasticsearch:
   clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
 
 kibana:
-  create: false
+  create: true
   image: "docker.elastic.co/kibana/kibana"
   imageTag: "7.9.4-SNAPSHOT"
   imagePullPolicy: "IfNotPresent"
