@@ -55,7 +55,7 @@ magmalte:
       operator_key_name: admin_operator.key.pem
 
   service:
-    type: ClusterIP
+    type: LoadBalancer
     http:
       port: 8081
       targetport: 8081
