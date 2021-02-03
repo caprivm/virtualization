@@ -25,7 +25,7 @@ nms:
 
     image:
       repository: docker.io/caprivm/magmalte
-      tag: 1.4.0
+      tag: 1.3.2
       pullPolicy: IfNotPresent
    
   nginx:
@@ -168,7 +168,7 @@ nginx:
   # nginx image
   image:
     repository: docker.io/caprivm/nginx
-    tag: 1.4.0
+    tag: 1.3.2
     pullPolicy: IfNotPresent
 
   # Settings affecting nginx application
@@ -216,7 +216,7 @@ controller:
   # Controller image
   image:
     repository: docker.io/caprivm/controller
-    tag: 1.4.0
+    tag: 1.3.2
     pullPolicy: IfNotPresent
   
   spec:
