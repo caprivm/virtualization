@@ -4,10 +4,10 @@ imagePullSecrets: []
 metrics:
   # Default volume configurations for metrics data - shared across prometheus,
   # alertmanager, and configmanager pods
-  volumes:
-    prometheusData:
-      volumeSpec:
-        emptyDir: {}
+  # volumes:
+    # prometheusData:
+      # volumeSpec:
+        # emptyDir: {}
         # hostPath:
         #   path: /prometheusData
         #   type: DirectoryOrCreate
@@ -108,14 +108,9 @@ prometheusConfigurer:
         port: 9100
         targetPort: 9100
 
-  environment:
-    promAlertconfigPort: "9100"
-    rulesDir: "/etc/configs/alert_rules"
-    prometheusURL: "orc8r-prometheus:9090"
-    alertmanagerConfigPort: "9101"
-    alertmanagerConfPath: "/etc/configs/alertmanager.yml"
-    alertmanagerURL: "orc8r-alertmanager:9093"
-    prometheusConfigurerPort: 9100
+  prometheusConfigurerPort: 9100
+  rulesDir: "/etc/configs/alert_rules/"
+  prometheusURL: "orc8r-prometheus:9090"
 
   image:
     repository: docker.io/facebookincubator/prometheus-configurer
@@ -225,9 +220,9 @@ grafana:
 
   volumes:
     # Default volume configurations for grafana data.
-    grafanaData:
-      volumeSpec:
-        emptyDir: {}
+    # grafanaData:
+      # volumeSpec:
+        # emptyDir: {}
 
   image:
     repository: docker.io/grafana/grafana
@@ -261,6 +256,9 @@ grafana:
 userGrafana:
   # Enable/Disable chart
   create: true
+  
+  # Reverse proxy setting, root url grafana will be accessed through
+  rootURL: /grafana
 
   # Service configuration.
   service:

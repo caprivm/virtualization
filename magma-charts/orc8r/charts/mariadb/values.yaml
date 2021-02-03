@@ -126,12 +126,12 @@ db:
   ## MariaDB username and password
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-user-on-first-run
   ##
-  user: "magma"
-  password: "password"
+  user: ""
+  password: ""
   ## Database to create
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-on-first-run
   ##
-  name: magma
+  name: my_database
   ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
   ## If it is not force, a random password will be generated.
   ##
@@ -146,7 +146,7 @@ replication:
   ## Enable replication. This enables the creation of replicas of MariaDB. If false, only a
   ## master deployment would be created
   ##
-  enabled: false
+  enabled: true
   ## MariaDB replication user
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#setting-up-a-replication-cluster
   ##
@@ -219,7 +219,7 @@ master:
   persistence:
     ## If true, use a Persistent Volume Claim, If false, use emptyDir
     ##
-    enabled: false
+    enabled: true
     # Enable persistence using an existing PVC
     # existingClaim:
     # Subdirectory of the volume to mount

@@ -17,8 +17,8 @@ imagePullSecrets: []
 # - name: orc8r-secrets-registry
 
 # Define which secrets should be mounted by pods.
-# secret:
-#   certs: orc8r-certs
+secret:
+  certs: orc8r-certs
 
 # magmalte
 magmalte:
@@ -30,19 +30,18 @@ magmalte:
     rbac: true
   
   env:
-    api_host: orc8r-proxy:9443
+    api_host: orc8r-nginx-proxy.magma.svc.cluster.local:9443
     host: 0.0.0.0
     port: 8081
     mapbox_access_token: ""
-    mysql_host: mariadb
+    mysql_host: mariadb.magma.svc.cluster.local
     mysql_db: magma
     mysql_user: magma
     mysql_pass: password
-    mysql_dialect: mariadb
+    mysql_dialect: mysql
+    grafana_address: orc8r-user-grafana:3000
 
-  labels:
-    node_selector_key: worker-type
-    node_selector_value: controller
+  labels: {}
 
   image:
     repository:
@@ -59,25 +58,18 @@ magmalte:
     http:
       port: 8081
       targetport: 8081
-      nodePort: ""
+      nodePort: ""  
 
+  replicas: 1
+  resources: {}
+  nodeSelector: {}
   tolerations: []
   affinity: {}
 
 # nginx-Proxy
-nginxserviceloadBalancerIP: ""
 nginx:
   create: true
-  manifests:
-    configmap: true
-    secrets: true
-    deployment: true
-    service: true
-    rbac: true
-
-  labels:
-    node_selector_key: worker-type
-    node_selector_value: controller
+  labels: {}
 
   image:
     repository: nginx
@@ -94,32 +86,11 @@ nginx:
 
   deployment:
     spec:
-      ssl_cert_name: controller.crt
-      ssl_cert_key_name: controller.key
+      ssl_cert_name: nms_nginx.pem
+      ssl_cert_key_name: nms_nginx.key.pem
 
+  replicas: 1
+  resources: {}
+  nodeSelector: {}
   tolerations: []
   affinity: {}
-
-# POD Resource
-pod:
-  replicas:
-    nginx:
-      server: 1
-    magmalte:
-      server: 1
-  resources:
-    enabled: False
-    nginx:
-      requests:
-        memory: "512Mi"
-        cpu: "100m"
-      limits:
-        memory: "1024Mi"
-        cpu: "2000m"
-    magmalte:
-      requests:
-        memory: "1024Mi"
-        cpu: "100m"
-      limits:
-        memory: "2048Mi"
-        cpu: "2000m"

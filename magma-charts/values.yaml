@@ -51,12 +51,18 @@ metrics:
     volumes:
       prometheusConfig:
         volumeSpec:
-          persistentVolumeClaim:
-            claimName: promcfg
+          hostPath:
+            path: /prometheusData
+            type: DirectoryOrCreate
+        # persistentVolumeClaim:
+          # claimName: promcfg
       prometheusData:
         volumeSpec:
-          persistentVolumeClaim:
-            claimName: promdata
+          hostPath:
+            path: /configs/prometheus
+            type: DirectoryOrCreate
+        # persistentVolumeClaim:
+          # claimName: promdata
 
   grafana:
     create: false
@@ -66,21 +72,33 @@ metrics:
     volumes:
       # Default volume configurations for grafana data.
       dashboards:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanadashboards
+        hostPath:
+          path: /grafanaData/dashboards
+          type: DirectoryOrCreate
+              #volumeSpec:
+                # persistentVolumeClaim:
+                #claimName: grafanadashboards
       datasources:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanadatasources
+        hostPath:
+          path: /grafanaData/datasources
+          type: DirectoryOrCreate
+              # volumeSpec:
+                #persistentVolumeClaim:
+                #claimName: grafanadatasources
       dashboardproviders:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanaproviders
+        hostPath:
+          path: /grafanaData/dashboardproviders
+          type: DirectoryOrCreate
+              #volumeSpec:
+                #persistentVolumeClaim:
+                #claimName: grafanaproviders
       grafanaData:
-        volumeSpec:
-          persistentVolumeClaim:
-            claimName: grafanadata
+        hostPath:
+          path: /grafanaData/grafanaData
+          type: DirectoryOrCreate
+              #volumeSpec:
+              #persistentVolumeClaim:
+              #claimName: grafanadata
 
   prometheus:
     create: true
@@ -123,9 +141,6 @@ secret:
   configs:
     orc8r: orc8r-secrets-configs-orc8r
   envdir: orc8r-secrets-envdir
-
-proxyserviceloadBalancerIP: ""
-nginxserviceloadBalancerIP: ""
 
 nginx:
   # Enable/Disable chart
@@ -175,7 +190,6 @@ nginx:
   spec:
     # magma controller domain name
     hostname: "controller.magma.test"
-    http_proxy_backend: "orc8r-controller"
     # when nginx sees a variable in a server_name it needs a resolver
     # by default we'll use kube-dns
     resolver: "coredns.kube-system.svc.cluster.local valid=10s"
@@ -251,8 +265,33 @@ controller:
 cloudwatch:
   create: false
 
+# logging sub-chart configuration.
+logging:
+  enabled: true
+
 mariadb:
   create: true
+  global:
+    storageClass: managed-nfs-storage
+  image:
+    tag: 10.3.22-debian-10-r27
+    debug: true
+  master:
+    nodeSelector:
+      kubernetes.io/hostname: compute4
+    persistence:
+      size: 4Gi
+    extraFlags: --sql-mode=ANSI_QUOTES
+  slave:
+    nodeSelector:
+      kubernetes.io/hostname: compute4
+    persistence:
+      size: 4Gi
+  rootUser:
+    password: magma
+  replication:
+    password: magma
+
 
 postgresql:
   create: true
@@ -341,6 +380,3 @@ kibana:
     dashboards:
       k8s: https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json
 
-# logging sub-chart configuration.
-logging:
-  enabled: true
