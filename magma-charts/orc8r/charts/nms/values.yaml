@@ -18,27 +18,24 @@ imagePullSecrets: []
 
 # Define which secrets should be mounted by pods.
 secret:
-  certs: orc8r-certs
+  certs: orc8r-secrets-certs
+
+rbac: false
 
 # magmalte
 magmalte:
   create: true
-  manifests:
-    secrets: true
-    deployment: true
-    service: true
-    rbac: true
-  
+    
   env:
     api_host: orc8r-nginx-proxy.magma.svc.cluster.local:9443
     host: 0.0.0.0
     port: 8081
     mapbox_access_token: ""
-    mysql_host: mariadb.magma.svc.cluster.local
+    mysql_host: orc8r-mariadb.magma.svc.cluster.local
     mysql_db: magma
     mysql_user: magma
     mysql_pass: password
-    mysql_dialect: mysql
+    mysql_dialect: mariadb
     grafana_address: orc8r-user-grafana:3000
 
   labels: {}
@@ -54,7 +51,7 @@ magmalte:
       operator_key_name: admin_operator.key.pem
 
   service:
-    type: LoadBalancer
+    type: ClusterIP
     http:
       port: 8081
       targetport: 8081

@@ -17,25 +17,58 @@ nms:
   
   magmalte:
     create: true
-    manifests:
-      secrets: true
-      deployment: true
-      service: true
-      rbac: true
+    replicas: 1
     
+    env:
+      api_host: orc8r-nginx-proxy.magma.svc.cluster.local:443
+      host: 0.0.0.0
+      port: 8081
+      mapbox_access_token: ""
+      mysql_host: orc8r-mariadb.magma.svc.cluster.local
+      mysql_db: magma
+      mysql_user: root
+      mysql_pass: password
+      mysql_dialect: mariadb
+      grafana_address: orc8r-user-grafana:3000
+
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.3.2
       pullPolicy: IfNotPresent
-   
+    
+    deployment:
+      spec:
+        operator_cert_name: admin_operator.pem
+        operator_key_name: admin_operator.key.pem
+
+    service:
+      type: LoadBalancer
+      http:
+        port: 8081
+        targetport: 8081
+        nodePort: ""
+
   nginx:
     create: true
-    manifests:
-      configmap: true
-      secrets: true
-      deployment: true
-      service: true
-      rbac: true
+    replicas: 1
+    image:
+      repository: nginx
+      tag: latest
+      pullPolicy: Always
+  
+    service:
+      type: LoadBalancer
+      loadBalancerIP: ""
+      annotations: {}
+      https:
+        port: 443
+        targetport: 443
+        nodePort: ""
+  
+    deployment:
+      spec:
+        ssl_cert_name: nms_nginx.pem
+        ssl_cert_key_name: nms_nginx.key.pem
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -69,6 +102,11 @@ metrics:
    
   userGrafana:
     create: true 
+    image:
+      repository: grafana/grafana
+      tag: 6.6.2
+      pullPolicy: IfNotPresent
+
     volumes:
       # Default volume configurations for grafana data.
       dashboards:
@@ -102,12 +140,17 @@ metrics:
 
   prometheus:
     create: true
+    image:
+      repository: prom/prometheus
+      tag: v2.20.1
+      pullPolicy: IfNotPresent
+
 
   prometheusCache:
     create: true
     image:
       repository: docker.io/facebookincubator/prometheus-edge-hub
-      tag: "1.0.0"  # Double quote to cast to string
+      tag: 1.1.0
       pullPolicy: IfNotPresent
     # Maximum number of datapoints in the cache at one time. Unlimited if <= 0.
     limit: 500000
@@ -287,9 +330,14 @@ mariadb:
       kubernetes.io/hostname: compute4
     persistence:
       size: 4Gi
+  db:
+    name: magma
+    user: root
+    password: password
   rootUser:
-    password: magma
+    password: password
   replication:
+    user: magma
     password: magma
 
 
