@@ -27,7 +27,7 @@ nms:
       mysql_host: orc8r-mariadb.magma.svc.cluster.local
       mysql_db: magma
       mysql_user: root
-      mysql_pass: password
+      mysql_pass: magma
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
 
@@ -58,13 +58,17 @@ nms:
   
     service:
       type: LoadBalancer
-      loadBalancerIP: ""
       annotations: {}
       https:
         port: 443
         targetport: 443
         nodePort: ""
-  
+
+    metadata:
+      annotations:
+        nginx.org/proxy-connect-timeout: "180s"
+        nginx.org/proxy-read-timeout: "180s"
+
     deployment:
       spec:
         ssl_cert_name: nms_nginx.pem
@@ -233,6 +237,7 @@ nginx:
   spec:
     # magma controller domain name
     hostname: "controller.magma.test"
+    http_proxy_backend: "orc8r-controller"
     # when nginx sees a variable in a server_name it needs a resolver
     # by default we'll use kube-dns
     resolver: "coredns.kube-system.svc.cluster.local valid=10s"
@@ -263,7 +268,7 @@ controller:
   service:
     annotations: {}
     labels: {}
-    type: ClusterIP
+    type: LoadBalancer
     port: 8080
     targetPort: 8080
     # port range exposed by controller
@@ -332,12 +337,11 @@ mariadb:
       size: 4Gi
   db:
     name: magma
-    user: root
-    password: password
-  rootUser:
-    password: password
-  replication:
     user: magma
+    password: magma
+  rootUser:
+    password: magma
+  replication:
     password: magma
 
 
@@ -358,7 +362,7 @@ elasticsearch:
     storageClassName: managed-nfs-storage
     resources:
       requests:
-        storage: 8Gi
+        storage: 20Gi
 
   rbac:
     create: true
@@ -387,7 +391,7 @@ elasticsearch:
     externalTrafficPolicy: ""
 
   # https://www.elastic.co/guide/en/elasticsearch/reference/7.9/cluster-health.html#request-params wait_for_status
-  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+  clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 
 kibana:
   create: true
@@ -404,6 +408,7 @@ kibana:
       value: "false"
 
   protocol: http
+  serverHost: "0.0.0.0"
   healthCheckPath: "/app/kibana"
 
   service:
@@ -414,13 +419,14 @@ kibana:
     annotations: {}
     httpPortName: http
 
-  files:
-    kibana.yml:
+  kibanaConfig:
+    kibana.yml: |
       ## Default Kibana configuration from kibana-docker.
-      server.name: kibana
-      server.host: "0"
+      server.name: "kibana"
+      server.port: 5601
+      server.host: "0.0.0.0"
       elasticsearch.hosts: "http://elasticsearch-master:9200"
-      # elasticsearch.requestTimeout: 30000
+      elasticsearch.requestTimeout: 90000
 
   dashboardImport:
     enabled: true
