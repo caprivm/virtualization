@@ -224,7 +224,7 @@ nginx:
         port: 80
         targetPort: 80
         nodePort: ""
-    loadBalancerIP: ""
+    loadBalancerIP: "192.168.1.12"
     loadBalancerSourceRanges: []
 
   # nginx image
@@ -422,7 +422,7 @@ kibana:
   kibanaConfig:
     kibana.yml: |
       ## Default Kibana configuration from kibana-docker.
-      server.name: "kibana"
+      server.name: "orc8r-kibana"
       server.port: 5601
       server.host: "0.0.0.0"
       elasticsearch.hosts: "http://elasticsearch-master:9200"
