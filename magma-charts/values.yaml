@@ -24,10 +24,10 @@ nms:
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
-      mysql_host: orc8r-mariadb.magma.svc.cluster.local
+      mysql_host: mysql2-mariadb.magma.svc.cluster.local
       mysql_db: magma
       mysql_user: root
-      mysql_pass: magma
+      mysql_pass: iNAReV6C6J
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
 
@@ -315,48 +315,49 @@ cloudwatch:
 
 # logging sub-chart configuration.
 logging:
-  enabled: true
+  enabled: false
 
-mariadb:
-  create: true
-  global:
-    storageClass: managed-nfs-storage
-  image:
-    registry: docker.io
-    repository: bitnami/mariadb
-    tag: 10.3.22-debian-10-r44
-    debug: true
-  master:
-    persistence:
-      size: 4Gi
-    nodeSelector:
-      kubernetes.io/hostname: compute4
-    extraFlags: --sql-mode=ANSI_QUOTES
-  slave:
-    persistence:
-      size: 4Gi
-    nodeSelector:
-      kubernetes.io/hostname: compute4
-  db:
-    # name: magma
-    user: magma
-    password: magma
-    forcePassword: true
-    injectSecretsAsVolume: true
-  rootUser:
-    password: magma
-    forcePassword: true
-    injectSecretsAsVolume: true
-  replication:
-    password: magma
-    forcePassword: true
-    injectSecretsAsVolume: true
+# mariadb:
+  # create: false
+  # enabled: false
+  # global:
+  #   storageClass: managed-nfs-storage
+  # image:
+  #   registry: docker.io
+  #   repository: bitnami/mariadb
+  #   tag: 10.3.22-debian-10-r44
+  #   debug: true
+  # master:
+  #   persistence:
+  #     size: 4Gi
+  #   nodeSelector:
+  #     kubernetes.io/hostname: compute4
+  #   extraFlags: --sql-mode=ANSI_QUOTES
+  # slave:
+  #   persistence:
+  #     size: 4Gi
+  #   nodeSelector:
+  #     kubernetes.io/hostname: compute4
+  # db:
+  #  name: magma
+  #  user: magma
+  # password: magma
+  # forcePassword: true
+  #   injectSecretsAsVolume: true
+  # rootUser:
+  #   password: magma
+  #   forcePassword: true
+  #   injectSecretsAsVolume: true
+  # replication:
+  #   password: magma
+  #   forcePassword: true
+  #   injectSecretsAsVolume: true
 
 postgresql:
-  create: true
+  enabled: true
 
 elasticsearch:
-  create: true
+  enabled: true
   replicas: 1
   minimumMasterNodes: 1
 
@@ -401,7 +402,7 @@ elasticsearch:
   clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 
 kibana:
-  create: true
+  enabled: true
   image: "docker.elastic.co/kibana/kibana"
   imageTag: "7.9.4-SNAPSHOT"
   imagePullPolicy: "IfNotPresent"
