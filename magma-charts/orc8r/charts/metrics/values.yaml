@@ -272,18 +272,18 @@ userGrafana:
 
   volumes:
     # Default volume configurations for grafana data.
-    dashboards:
-      persistentVolumeClaim:
-        claimName: grafanadashboards
-    datasources:
-      persistentVolumeClaim:
-        claimName: grafanadatasources
-    dashboardproviders:
-      persistentVolumeClaim:
-        claimName: grafanaproviders
-    grafanaData:
-      persistentVolumeClaim:
-        claimName: grafanadata
+  #  dashboards:
+  #    persistentVolumeClaim:
+  #      claimName: grafanadashboards
+  #  datasources:
+  #    persistentVolumeClaim:
+  #      claimName: grafanadatasources
+  #  dashboardproviders:
+  #    persistentVolumeClaim:
+  #      claimName: grafanaproviders
+  #  grafanaData:
+  #    persistentVolumeClaim:
+  #      claimName: grafanadata
 
   image:
     repository: grafana/grafana

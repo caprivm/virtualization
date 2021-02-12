@@ -20,14 +20,14 @@ nms:
     replicas: 1
     
     env:
-      api_host: orc8r-nginx-proxy.magma.svc.cluster.local:443
+      api_host: orc8r-nginx-proxy.magma.svc.cluster.local
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
-      mysql_host: mysql2-mariadb.magma.svc.cluster.local
+      mysql_host: mysql3-mariadb.magma.svc.cluster.local
       mysql_db: magma
       mysql_user: root
-      mysql_pass: iNAReV6C6J
+      mysql_pass: bK73abE9Jn
       mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
 
@@ -81,7 +81,7 @@ imagePullSecrets: []
 
 # Metrics sub-chart configuration.
 metrics:
-  enabled: false
+  enabled: true
 
   metrics:
     create: true
