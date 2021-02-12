@@ -243,7 +243,7 @@ nginx:
     resolver: "coredns.kube-system.svc.cluster.local valid=10s"
 
   # Number of nginx replicas desired
-  replicas: 2
+  replicas: 1
 
   # Resource limits & requests
   resources: {}
