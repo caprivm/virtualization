@@ -385,3 +385,7 @@ cloudwatch:
 # logging sub-chart configuration.
 logging:
   enabled: true
+
+# postgresql sub-chart configuration
+postgresql:
+  enabled: true
