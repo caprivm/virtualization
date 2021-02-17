@@ -20,7 +20,7 @@ nms:
     replicas: 1
     
     env:
-      api_host: orc8r-nginx-proxy.magma.svc.cluster.local
+      api_host: orc8r-nginx-proxy.magma.svc.cluster.local:443
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
@@ -81,7 +81,7 @@ imagePullSecrets: []
 
 # Metrics sub-chart configuration.
 metrics:
-  enabled: true
+  enabled: false
 
   metrics:
     create: true
@@ -224,7 +224,7 @@ nginx:
         port: 80
         targetPort: 80
         nodePort: ""
-    loadBalancerIP: "192.168.1.12"
+    loadBalancerIP: ""
     loadBalancerSourceRanges: []
 
   # nginx image
@@ -316,42 +316,6 @@ cloudwatch:
 # logging sub-chart configuration.
 logging:
   enabled: false
-
-# mariadb:
-  # create: false
-  # enabled: false
-  # global:
-  #   storageClass: managed-nfs-storage
-  # image:
-  #   registry: docker.io
-  #   repository: bitnami/mariadb
-  #   tag: 10.3.22-debian-10-r44
-  #   debug: true
-  # master:
-  #   persistence:
-  #     size: 4Gi
-  #   nodeSelector:
-  #     kubernetes.io/hostname: compute4
-  #   extraFlags: --sql-mode=ANSI_QUOTES
-  # slave:
-  #   persistence:
-  #     size: 4Gi
-  #   nodeSelector:
-  #     kubernetes.io/hostname: compute4
-  # db:
-  #  name: magma
-  #  user: magma
-  # password: magma
-  # forcePassword: true
-  #   injectSecretsAsVolume: true
-  # rootUser:
-  #   password: magma
-  #   forcePassword: true
-  #   injectSecretsAsVolume: true
-  # replication:
-  #   password: magma
-  #   forcePassword: true
-  #   injectSecretsAsVolume: true
 
 postgresql:
   enabled: true
