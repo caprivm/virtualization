@@ -18,24 +18,22 @@ imagePullSecrets: []
 
 # Define which secrets should be mounted by pods.
 secret:
-  certs: orc8r-secrets-certs
+  certs: orc8r-certs
 
 rbac: false
 
-# magmalte
 magmalte:
   create: true
-    
   env:
-    api_host: orc8r-nginx-proxy.magma.svc.cluster.local:9443
+    api_host: orc8r-proxy.magma.svc.cluster.local:9443
     host: 0.0.0.0
     port: 8081
     mapbox_access_token: ""
-    mysql_host: orc8r-mariadb.magma.svc.cluster.local
+    mysql_host: mariadb.magma.svc.cluster.local
     mysql_db: magma
     mysql_user: magma
     mysql_pass: password
-    mysql_dialect: mariadb
+    mysql_dialect: mysql
     grafana_address: orc8r-user-grafana:3000
 
   labels: {}
@@ -55,15 +53,33 @@ magmalte:
     http:
       port: 8081
       targetport: 8081
-      nodePort: ""  
+      nodePort: ""
 
   replicas: 1
+
+  # Resource limits & requests
   resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # Define which Nodes the Pods are scheduled on.
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
+
+  # Tolerations for use with node taints
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
+
+  # Assign proxy to run on specific nodes
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   affinity: {}
 
-# nginx-Proxy
+## Nginx-Proxy
+#
 nginx:
   create: true
   labels: {}
@@ -74,7 +90,7 @@ nginx:
     pullPolicy: Always
 
   service:
-    type: LoadBalancer
+    type: ClusterIP
     annotations: {}
     https:
       port: 443
@@ -87,7 +103,24 @@ nginx:
       ssl_cert_key_name: nms_nginx.key.pem
 
   replicas: 1
+
+  # Resource limits & requests
   resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # Define which Nodes the Pods are scheduled on.
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
+
+  # Tolerations for use with node taints
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
+
+  # Assign proxy to run on specific nodes
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   affinity: {}

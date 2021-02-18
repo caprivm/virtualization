@@ -4,16 +4,14 @@ imagePullSecrets: []
 metrics:
   # Default volume configurations for metrics data - shared across prometheus,
   # alertmanager, and configmanager pods
-  # volumes:
-    # prometheusData:
-      # volumeSpec:
-        # emptyDir: {}
+  volumes:
+    prometheusData:
+      volumeSpec: {}
         # hostPath:
         #   path: /prometheusData
         #   type: DirectoryOrCreate
-    # prometheusConfig:
-      # volumeSpec:
-        # emptyDir: {}
+    prometheusConfig:
+      volumeSpec: {}
         # hostPath:
         #   path: /configs/prometheus
         #   type: DirectoryOrCreate
@@ -113,8 +111,8 @@ prometheusConfigurer:
   prometheusURL: "orc8r-prometheus:9090"
 
   image:
-    repository: docker.io/facebookincubator/prometheus-configurer
-    tag: 1.0.0
+    repository:
+    tag:
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -152,8 +150,8 @@ alertmanagerConfigurer:
   alertmanagerURL: "orc8r-alertmanager:9093"
 
   image:
-    repository: docker.io/prom/alertmanager
-    tag: v0.18.0
+    repository:
+    tag:
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -185,8 +183,8 @@ prometheusCache:
         targetPort: 9091
 
   image:
-    repository: docker.io/facebookincubator/prometheus-edge-hub
-    tag: 1.0.0
+    repository:
+    tag:
     pullPolicy: IfNotPresent
 
   # Maximum number of datapoints in the cache at one time. Unlimited if <= 0.
@@ -197,8 +195,23 @@ prometheusCache:
 
   # Resource limits & requests
   resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # Define which Nodes the Pods are scheduled on.
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
+
+  # Tolerations for use with node taints
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
+
+  # Assign prometheusCache to run on specific nodes
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   affinity: {}
 
 grafana:
@@ -220,13 +233,13 @@ grafana:
 
   volumes:
     # Default volume configurations for grafana data.
-    # grafanaData:
-      # volumeSpec:
-        # emptyDir: {}
+    grafanaData:
+      volumeSpec:
+        emptyDir: {}
 
   image:
-    repository: docker.io/grafana/grafana
-    tag: latest
+    repository:
+    tag:
     pullPolicy: IfNotPresent
 
   # Number of metrics replicas desired
@@ -256,7 +269,7 @@ grafana:
 userGrafana:
   # Enable/Disable chart
   create: true
-  
+
   # Reverse proxy setting, root url grafana will be accessed through
   rootURL: /grafana
 
@@ -272,22 +285,14 @@ userGrafana:
 
   volumes:
     # Default volume configurations for grafana data.
-  #  dashboards:
-  #    persistentVolumeClaim:
-  #      claimName: grafanadashboards
-  #  datasources:
-  #    persistentVolumeClaim:
-  #      claimName: grafanadatasources
-  #  dashboardproviders:
-  #    persistentVolumeClaim:
-  #      claimName: grafanaproviders
-  #  grafanaData:
-  #    persistentVolumeClaim:
-  #      claimName: grafanadata
+    dashboards: {}
+    datasources: {}
+    dashboardproviders: {}
+    grafanaData: {}
 
   image:
     repository: grafana/grafana
-    tag: latest
+    tag: 6.6.2
     pullPolicy: IfNotPresent
 
   # Number of metrics replicas desired

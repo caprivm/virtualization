@@ -7,9 +7,9 @@ dependencies:
   version: 1.4.15
 - name: nms
   repository: ""
-  version: 0.1.7
+  version: 0.1.6
 - name: logging
   repository: ""
   version: 0.1.10
-digest: sha256:5430b4b46ef8bd7bbbd154a67f1c5a40eb4d208a35696468fc87103558934f44
-generated: "2021-01-12T21:28:58.429265036Z"
+digest: sha256:25cdc16d971bef65681a576b37021b2be3967b60fe9ce7f348ad31db9bf16c0a
+generated: "2019-11-14T21:58:25.774323-08:00"
