@@ -12,6 +12,10 @@
 ## Global values for NMS sub-chart
 nms:
   enabled: true
+  secret:
+    certs: orc8r-secrets-certs
+  imagePullSecrets:
+  - name: orc8r-secrets-registry
   magmalte:
     create: true
     image:
@@ -59,7 +63,7 @@ metrics:
 
 # secrets sub-chart configuration.
 secrets:
-  create: false
+  create: true
 
 # Define which secrets should be mounted by pods.
 secret:
