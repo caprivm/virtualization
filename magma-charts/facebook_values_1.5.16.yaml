@@ -173,10 +173,10 @@ controller:
       sql_dialect: maria
       db: magma
       protocol: tcp
-      host: mariadb.magma.svc.cluster.local
+      host: mysql-mariadb.magma.svc.cluster.local
       port: 3306
-      user: magma
-      pass: password
+      user: root
+      pass: 3So4dcdEL3
     service_registry:
       mode: "yaml"
 
