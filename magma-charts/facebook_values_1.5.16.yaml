@@ -18,6 +18,17 @@ nms:
   - name: orc8r-secrets-registry
   magmalte:
     create: true
+    env:
+      api_host: orc8r-nginx-proxy.magma.svc.cluster.local
+      host: 0.0.0.0
+      port: 8081
+      mapbox_access_token: ""
+      mysql_host: mysql-mariadb.magma.svc.cluster.local
+      mysql_db: magma
+      mysql_user: root
+      mysql_pass: c7YDBbqI62 
+      mysql_dialect: mysql
+      grafana_address: orc8r-user-grafana:3000
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.4.0
@@ -26,12 +37,12 @@ nms:
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: 
+imagePullSecrets:
 - name: orc8r-secrets-registry
 
 ## metrics sub-chart configuration.
 metrics:
-  enabled: true
+  enabled: false
   imagePullSecrets:
   - name: orc8r-secrets-registry
   metrics:
@@ -67,10 +78,12 @@ secrets:
 
 # Define which secrets should be mounted by pods.
 secret:
-  certs: orc8r-secrets-certs
+  certs:
+    enabled: true
+    certs: orc8r-secrets-certs
   configs:
     orc8r: orc8r-secrets-configs-orc8r
-  envdir: orc8r-secrets-envdir
+  # envdir: orc8r-secrets-envdir
 
 nginx:
   create: true
@@ -176,7 +189,7 @@ controller:
       host: mysql-mariadb.magma.svc.cluster.local
       port: 3306
       user: root
-      pass: 3So4dcdEL3
+      pass: c7YDBbqI62
     service_registry:
       mode: "yaml"
 
