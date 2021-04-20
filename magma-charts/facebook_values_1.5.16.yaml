@@ -82,7 +82,12 @@ secret:
     enabled: true
     certs: orc8r-secrets-certs
   configs:
-    orc8r: orc8r-secrets-configs-orc8r
+    orc8r: # orc8r-secrets-configs-orc8r
+      elastic.yml: |-
+        elasticHost: "elasticsearch-master"
+        elasticPort: 9200
+      analytics.yml: |-
+        analysisSchedule: 3
   # envdir: orc8r-secrets-envdir
 
 nginx:
