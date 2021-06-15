@@ -18,22 +18,29 @@ nms:
   - name: orc8r-secrets-registry
   magmalte:
     create: true
+    service:
+      type: NodePort
     env:
-      api_host: orc8r-nginx-proxy.magma.svc.cluster.local
+      api_host: orc8r-nginx-proxy
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
-      mysql_host: mysql-mariadb.magma.svc.cluster.local
+      mysql_host: mysql-mariadb
       mysql_db: magma
       mysql_user: root
-      mysql_pass: c7YDBbqI62 
-      mysql_dialect: mysql
+      mysql_pass: Y8zVYrEwV6
+      mysql_dialect: mariadb
       grafana_address: orc8r-user-grafana:3000
     image:
       repository: docker.io/caprivm/magmalte
       tag: 1.4.0
+    nodeSelector:
+      kubernetes.io/hostname: compute4
+
   nginx:
     create: true
+    service:
+      type: NodePort
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -42,7 +49,7 @@ imagePullSecrets:
 
 ## metrics sub-chart configuration.
 metrics:
-  enabled: false
+  enabled: true
   imagePullSecrets:
   - name: orc8r-secrets-registry
   metrics:
@@ -59,36 +66,44 @@ metrics:
             type: DirectoryOrCreate
   prometheus:
     create: true
+
   prometheusCache:
     create: true
+
   alertmanager:
     create: true
+
   alertmanagerConfigurer:
     create: true
+    image:
+      repository: docker.io/facebookincubator/alertmanager-configurer
+      tag: 1.0.4
+      pullPolicy: IfNotPresent
+    alertmanagerURL: "orc8r-alertmanager:9093"
+
   prometheusConfigurer:
     create: true
+    image:
+      repository: docker.io/facebookincubator/prometheus-configurer
+      tag: 1.0.4
+      pullPolicy: IfNotPresent
+    prometheusURL: "orc8r-prometheus:9090"
+
   thanos:
     enabled: false
-#  userGrafana:
-#    create: false
+  userGrafana:
+    create: true
 
 # secrets sub-chart configuration.
 secrets:
-  create: true
+  create: false
 
 # Define which secrets should be mounted by pods.
 secret:
-  certs:
-    enabled: true
-    certs: orc8r-secrets-certs
   configs:
-    orc8r: # orc8r-secrets-configs-orc8r
-      elastic.yml: |-
-        elasticHost: "elasticsearch-master"
-        elasticPort: 9200
-      analytics.yml: |-
-        analysisSchedule: 3
-  # envdir: orc8r-secrets-envdir
+    orc8r: orc8r-secrets-configs-orc8r
+  envdir: orc8r-secrets-envdir
+  certs: orc8r-secrets-certs
 
 nginx:
   create: true
@@ -111,7 +126,7 @@ nginx:
       clientcertLegacy: {}
       proxy: {}
     labels: {}
-    type: ClusterIP
+    type: NodePort
     port:
       clientcert:
         port: 8443
@@ -160,7 +175,8 @@ nginx:
 
   # Define which Nodes the Pods are scheduled on.
   # ref: https://kubernetes.io/docs/user-guide/node-selection/
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/hostname: compute4
 
   # Tolerations for use with node taints
   # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
@@ -187,16 +203,16 @@ controller:
   spec:
     # Postgres/mysql configuration
     database:
-      driver: mysql
-      sql_dialect: maria
+      driver: postgres
+      sql_dialect: psql
       db: magma
       protocol: tcp
-      host: mysql-mariadb.magma.svc.cluster.local
-      port: 3306
-      user: root
-      pass: c7YDBbqI62
-    service_registry:
-      mode: "yaml"
+      host: postgresql
+      port: 5432
+      user: postgres
+      pass: postgres
+      #     service_registry:
+      #       mode: "yaml"
 
   podAnnotations: {}
 

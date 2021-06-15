@@ -12,32 +12,69 @@
 ## Global values for NMS sub-chart
 nms:
   enabled: true
+  secret:
+    certs: orc8r-secrets-certs
+  imagePullSecrets:
+  - name: orc8r-secrets-registry
   magmalte:
     create: true
+    service:
+      type: NodePort
+    env:
+      api_host: orc8r-nginx-proxy
+      host: 0.0.0.0
+      port: 8081
+      mapbox_access_token: ""
+      mysql_host: mysql-mariadb
+      mysql_db: magma
+      mysql_user: root
+      mysql_pass: rXzztZaH95
+      mysql_dialect: mysql
+      grafana_address: orc8r-user-grafana:3000
     image:
-      repository: <registry>/magmalte
-      tag: latest
+      repository: docker.io/caprivm/magmalte
+      tag: 1.5.0
   nginx:
     create: true
+    service:
+      type: NodePort
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: []
-# - name: orc8r-secrets-registry
+imagePullSecrets:
+- name: orc8r-secrets-registry
 
 ## metrics sub-chart configuration.
 metrics:
-  enabled: true
+  enabled: false
+  imagePullSecrets:
+  - name: orc8r-secrets-registry
+  metrics:
+    volumes:
+      prometheusData:
+        volumeSpec:
+          hostPath:
+            path: /prometheusData
+            type: DirectoryOrCreate
+      prometheusConfig:
+        volumeSpec:
+          hostPath:
+            path: /configs/prometheus
+            type: DirectoryOrCreate
   prometheus:
-    create: false
+    create: true
   prometheusCache:
-    create: false
+    create: true
   alertmanager:
-    create: false
+    create: true
   alertmanagerConfigurer:
-    create: false
+    create: true
   prometheusConfigurer:
-    create: false
+    create: true
+  thanos:
+    enabled: false
+#  userGrafana:
+#    create: false
 
 # secrets sub-chart configuration.
 secrets:
@@ -45,10 +82,10 @@ secrets:
 
 # Define which secrets should be mounted by pods.
 secret:
-  certs: orc8r-secrets-certs
   configs:
     orc8r: orc8r-secrets-configs-orc8r
   envdir: orc8r-secrets-envdir
+  certs: orc8r-secrets-certs
 
 nginx:
   create: true
@@ -71,7 +108,7 @@ nginx:
       clientcertLegacy: {}
       proxy: {}
     labels: {}
-    type: ClusterIP
+    type: NodePort
     port:
       clientcert:
         port: 8443
@@ -94,17 +131,17 @@ nginx:
 
   # nginx image
   image:
-    repository:
-    tag: latest
+    repository: docker.io/caprivm/nginx
+    tag: 1.5.0
     pullPolicy: IfNotPresent
 
   # Settings affecting nginx application
   spec:
     # magma controller domain name
-    hostname: ""
+    hostname: "orc8r-nginx-proxy.magma.svc.cluster.local"
     # when nginx sees a variable in a server_name it needs a resolver
     # by default we'll use kube-dns
-    resolver: "kube-dns.kube-system.svc.cluster.local valid=10s"
+    resolver: "coredns.kube-system.svc.cluster.local valid=10s"
 
   # Number of nginx replicas desired
   replicas: 1
@@ -138,39 +175,25 @@ controller:
     minAvailable: 1
     maxUnavailable: ""
 
-  # Service configuration.
-  service:
-    annotations: {}
-    labels: {}
-    type: ClusterIP
-    port: 8080
-    targetPort: 8080
-    # port range exposed by controller
-    portStart: 9079
-    portEnd: 9108
-
-  # controller image
+  # orc8r_base image
   image:
-    repository:
-    tag: latest
+    repository: docker.io/caprivm/controller
+    tag: 1.5.0
     pullPolicy: IfNotPresent
 
   spec:
     # Postgres/mysql configuration
     database:
-      driver: postgres      # mysql/postgres
-      sql_dialect: psql # maria/psql
-      db: magma          # DB Name
+      driver: mysql
+      mysql_dialect: mysql
+      mysql_db: magma
       protocol: tcp
-      host: postgresql
-      port: 5432
-      user: postgres
-      pass: postgres
-
-  migration:
-    new_handlers: 0
-    new_mconfigs: 0
-    mconfig_whitelist: ""
+      mysql_host: mysql-mariadb
+      # port: 3306
+      mysql_user: root
+      mysql_pass: rXzztZaH95
+    service_registry:
+      mode: "yaml"
 
   podAnnotations: {}
 
@@ -197,6 +220,119 @@ controller:
   # Assign proxy to run on specific nodes
   # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   affinity: {}
+
+accessd:
+  service:
+    labels: {}
+    annotations: {}
+
+analytics:
+  service:
+    labels: {}
+    annotations: {}
+
+bootstrapper:
+  service:
+    labels: {}
+    annotations: {}
+
+certifier:
+  service:
+    labels: {}
+    annotations: {}
+
+configurator:
+  service:
+    labels: {}
+    annotations: {}
+
+ctraced:
+  service:
+    labels:
+      orc8r.io/obsidian_handlers: "true"
+      orc8r.io/swagger_spec: "true"
+    annotations:
+      orc8r.io/obsidian_handlers_path_prefixes: >
+        /magma/v1/networks/:network_id/tracing,
+
+device:
+  service:
+    labels: {}
+    annotations: {}
+
+directoryd:
+  service:
+    labels: {}
+    annotations: {}
+
+dispatcher:
+  service:
+    labels: {}
+    annotations: {}
+
+metricsd:
+  service:
+    labels:
+      orc8r.io/obsidian_handlers: "true"
+      orc8r.io/swagger_spec: "true"
+    annotations:
+      orc8r.io/obsidian_handlers_path_prefixes: >
+        /magma/v1/networks/:network_id/alerts,
+        /magma/v1/networks/:network_id/metrics,
+        /magma/v1/networks/:network_id/prometheus,
+        /magma/v1/tenants/:tenant_id/metrics,
+        /magma/v1/tenants/targets_metadata,
+
+obsidian:
+  service:
+    labels: {}
+    annotations: {}
+
+orchestrator:
+  service:
+    labels:
+      orc8r.io/analytics_collector: "true"
+      orc8r.io/mconfig_builder: "true"
+      orc8r.io/metrics_exporter: "true"
+      orc8r.io/obsidian_handlers: "true"
+      orc8r.io/state_indexer: "true"
+      orc8r.io/stream_provider: "true"
+      orc8r.io/swagger_spec: "true"
+    annotations:
+      orc8r.io/state_indexer_types: "directory_record"
+      orc8r.io/state_indexer_version: "1"
+      orc8r.io/stream_provider_streams: "configs"
+      orc8r.io/obsidian_handlers_path_prefixes: >
+        /,
+        /magma/v1/channels,
+        /magma/v1/events,
+        /magma/v1/networks,
+        /magma/v1/networks/:network_id,
+
+service_registry:
+  service:
+    labels: {}
+    annotations: {}
+
+state:
+  service:
+    labels: {}
+    annotations: {}
+
+streamer:
+  service:
+    labels: {}
+    annotations: {}
+
+tenants:
+  service:
+    labels:
+      orc8r.io/obsidian_handlers: "true"
+      orc8r.io/swagger_spec: "true"
+    annotations:
+      orc8r.io/obsidian_handlers_path_prefixes: >
+        /magma/v1/tenants,
+        /magma/v1/tenants/:tenants_id,
 
 # Set True to create a CloudWatch agent to monitor metrics
 cloudwatch:
