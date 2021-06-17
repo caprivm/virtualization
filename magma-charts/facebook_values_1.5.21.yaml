@@ -19,25 +19,25 @@ nms:
   magmalte:
     create: true
     service:
-      type: NodePort
+      type: LoadBalancer
     env:
       api_host: orc8r-nginx-proxy
       host: 0.0.0.0
       port: 8081
       mapbox_access_token: ""
-      mysql_host: mysql-mariadb
+      mysql_host: postgresql
       mysql_db: magma
-      mysql_user: root
-      mysql_pass: rXzztZaH95
-      mysql_dialect: mysql
+      mysql_user: postgres
+      mysql_pass: postgres
+      mysql_dialect: postgres
       grafana_address: orc8r-user-grafana:3000
     image:
       repository: docker.io/caprivm/magmalte
-      tag: 1.5.0
+      tag: 1.5.1
   nginx:
     create: true
     service:
-      type: NodePort
+      type: LoadBalancer
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -46,35 +46,55 @@ imagePullSecrets:
 
 ## metrics sub-chart configuration.
 metrics:
-  enabled: false
+  enabled: true
   imagePullSecrets:
   - name: orc8r-secrets-registry
   metrics:
     volumes:
-      prometheusData:
-        volumeSpec:
-          hostPath:
-            path: /prometheusData
-            type: DirectoryOrCreate
       prometheusConfig:
         volumeSpec:
-          hostPath:
-            path: /configs/prometheus
-            type: DirectoryOrCreate
+          persistentVolumeClaim:
+            claimName: promcfg
+      prometheusData:
+        volumeSpec:
+          persistentVolumeClaim:
+            claimName: promdata
+
   prometheus:
     create: true
   prometheusCache:
     create: true
+    limit: 500000
+
   alertmanager:
     create: true
   alertmanagerConfigurer:
     create: true
+
   prometheusConfigurer:
     create: true
   thanos:
     enabled: false
-#  userGrafana:
-#    create: false
+
+  userGrafana:
+    create: true
+    image:
+      repository: grafana/grafana
+      tag: 6.6.2
+      pullPolicy: IfNotPresent
+    volumes:
+      dashboardproviders:
+        persistentVolumeClaim:
+          claimName: grafanaproviders
+      dashboards:
+        persistentVolumeClaim:
+          claimName: grafanadashboards
+      datasources:
+        persistentVolumeClaim:
+          claimName: grafanadatasources
+      grafanaData:
+        persistentVolumeClaim:
+          claimName: grafanadata
 
 # secrets sub-chart configuration.
 secrets:
@@ -108,7 +128,7 @@ nginx:
       clientcertLegacy: {}
       proxy: {}
     labels: {}
-    type: NodePort
+    type: LoadBalancer
     port:
       clientcert:
         port: 8443
@@ -132,7 +152,7 @@ nginx:
   # nginx image
   image:
     repository: docker.io/caprivm/nginx
-    tag: 1.5.0
+    tag: 1.5.1
     pullPolicy: IfNotPresent
 
   # Settings affecting nginx application
@@ -178,22 +198,22 @@ controller:
   # orc8r_base image
   image:
     repository: docker.io/caprivm/controller
-    tag: 1.5.0
+    tag: 1.5.1
     pullPolicy: IfNotPresent
 
   spec:
     # Postgres/mysql configuration
     database:
-      driver: mysql
-      mysql_dialect: mysql
+      driver: postgres
+      mysql_dialect: psql
       mysql_db: magma
       protocol: tcp
-      mysql_host: mysql-mariadb
-      # port: 3306
-      mysql_user: root
-      mysql_pass: rXzztZaH95
-    service_registry:
-      mode: "yaml"
+      mysql_host: postgresql
+      port: 5432
+      mysql_user: postgres
+      mysql_pass: postgres
+  # service_registry:
+    # mode: "yaml"
 
   podAnnotations: {}
 
