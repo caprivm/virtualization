@@ -19,25 +19,31 @@ nms:
   magmalte:
     create: true
     service:
-      type: LoadBalancer
+      type: ClusterIP
     env:
       api_host: orc8r-nginx-proxy
-      host: 0.0.0.0
-      port: 8081
+      # host: 0.0.0.0
+      # port: 8081
       mapbox_access_token: ""
       mysql_host: postgresql
       mysql_db: magma
       mysql_user: postgres
       mysql_pass: postgres
       mysql_dialect: postgres
+      mysql_port: 5432
       grafana_address: orc8r-user-grafana:3000
     image:
-      repository: docker.io/caprivm/magmalte
-      tag: 1.5.1
+      repository: registry.gitlab.com/everis_factory/fbc/magma/magmalte
+      tag: latest
   nginx:
     create: true
     service:
       type: LoadBalancer
+    replicas: 1
+    deployment:
+      spec:
+        ssl_cert_name: controller.crt
+        ssl_cert_key_name: controller.key
 
 # Reference to one or more secrets to be used when pulling images
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -62,17 +68,35 @@ metrics:
 
   prometheus:
     create: true
+    includeOrc8rAlerts: true
+    prometheusCacheHostname: "orc8r-prometheus-cache"
+    alertmanagerHostname: "orc8r-alertmanager"
+    
+  grafana:
+    create: false
   prometheusCache:
     create: true
+    image:
+      repository: docker.io/facebookincubator/prometheus-edge-hub
+      tag: 1.1.0
     limit: 500000
 
   alertmanager:
     create: true
+  
   alertmanagerConfigurer:
     create: true
+    image:
+      repository: docker.io/facebookincubator/alertmanager-configurer
+      tag: 1.0.4
+    alertmanagerURL: "orc8r-alertmanager:9093"
 
   prometheusConfigurer:
     create: true
+    image:
+      repository: docker.io/facebookincubator/prometheus-configurer
+      tag: 1.0.4
+      prometheusURL: "orc8r-prometheus:9090"
   thanos:
     enabled: false
 
@@ -113,15 +137,13 @@ nginx:
   # Configure pod disruption budgets for nginx
   # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
-    enabled: false
-    minAvailable: 1
-    maxUnavailable: ""
+    enabled: true
 
   # Service configuration.
   service:
     enabled: true
     legacyEnabled: true
-    name: bootstrapper-orc8r-nginx
+    name: orc8r-bootstrapper-nginx
     annotations: {}
     extraAnnotations:
       bootstrapLagacy: {}
@@ -151,14 +173,15 @@ nginx:
 
   # nginx image
   image:
-    repository: docker.io/caprivm/nginx
-    tag: 1.5.1
+    repository: registry.gitlab.com/everis_factory/fbc/magma/nginx
+    tag: latest
     pullPolicy: IfNotPresent
 
   # Settings affecting nginx application
   spec:
     # magma controller domain name
-    hostname: "orc8r-nginx-proxy.magma.svc.cluster.local"
+    # hostname: "orc8r-nginx-proxy.magma.svc.cluster.local"
+    hostname: "controller.magma.svc.cluster.local"
     # when nginx sees a variable in a server_name it needs a resolver
     # by default we'll use kube-dns
     resolver: "coredns.kube-system.svc.cluster.local valid=10s"
@@ -191,29 +214,33 @@ controller:
   # Configure pod disruption budgets for controller
   # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
-    enabled: false
-    minAvailable: 1
-    maxUnavailable: ""
+    enabled: true
+    # minAvailable: 1
+    # maxUnavailable: ""
 
   # orc8r_base image
   image:
-    repository: docker.io/caprivm/controller
-    tag: 1.5.1
+    repository: registry.gitlab.com/everis_factory/fbc/magma/controller
+    tag: latest
     pullPolicy: IfNotPresent
 
   spec:
     # Postgres/mysql configuration
     database:
-      driver: postgres
-      mysql_dialect: psql
-      mysql_db: magma
-      protocol: tcp
-      mysql_host: postgresql
+      # driver: postgres
+      # mysql_dialect: psql
+      # mysql_db: magma
+      db: magma
+      # protocol: tcp
+      # mysql_host: postgresql
+      host: postgresql
       port: 5432
-      mysql_user: postgres
-      mysql_pass: postgres
-  # service_registry:
-    # mode: "yaml"
+      # mysql_user: postgres
+      # mysql_pass: postgres
+      user: postgres
+      pass: postgres
+    service_registry:
+      mode: "k8s"
 
   podAnnotations: {}
 
@@ -253,6 +280,7 @@ analytics:
 
 bootstrapper:
   service:
+    type: LoadBalancer
     labels: {}
     annotations: {}
 
@@ -290,6 +318,19 @@ dispatcher:
     labels: {}
     annotations: {}
 
+eventd:
+  service:
+    labels:
+      orc8r.io/obsidian_handlers: "true"
+      orc8r.io/swagger_spec: "true"
+    annotations:
+      orc8r.io/obsidian_handlers_path_prefixes: >
+        /magma/v1/networks/:network_id/logs,
+        /magma/v1/events,
+        /magma/v1/events/:network_id,
+        /magma/v1/events/:network_id/about,
+        /magma/v1/events/:network_id/about/count,
+
 metricsd:
   service:
     labels:
@@ -325,9 +366,10 @@ orchestrator:
       orc8r.io/obsidian_handlers_path_prefixes: >
         /,
         /magma/v1/channels,
-        /magma/v1/events,
         /magma/v1/networks,
+        /magma/v1/events,
         /magma/v1/networks/:network_id,
+        /magma/v1/about,
 
 service_registry:
   service:
@@ -360,4 +402,4 @@ cloudwatch:
 
 # logging sub-chart configuration.
 logging:
-  enabled: true
+  enabled: false

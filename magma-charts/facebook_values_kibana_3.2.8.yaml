@@ -1,0 +1,24 @@
+image:
+  repository: docker.elastic.co/kibana/kibana-oss
+  tag: 7.10.2
+  pullPolicy: IfNotPresent
+
+env:
+  LOGGING_VERBOSE: "false"
+  ELASTICSEARCH_HOSTS: http://elasticsearch-master:9200
+  # SERVER_PORT: 5601
+
+files:
+  kibana.yml:
+    server.name: kibana
+    server.host: "0"
+    elasticsearch.hosts: http://elasticsearch-master:9200
+
+dashboardImport:
+  enabled: true
+  timeout: 60
+  dashboards:
+    k8s: https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json
+
+service:
+  type: LoadBalancer

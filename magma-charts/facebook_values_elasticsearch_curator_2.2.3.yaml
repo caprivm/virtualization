@@ -1,0 +1,57 @@
+cronjob:
+  schedule: "0 0 * * *"
+  annotations: {}
+  labels: {}
+  concurrencyPolicy: ""
+  failedJobsHistoryLimit: ""
+  successfulJobsHistoryLimit: ""
+  jobRestartPolicy: Never  
+
+configMaps:
+  action_file_yml: |-
+    ---
+    actions:
+      1:
+        action: delete_indices
+        description: "Clean up ES by deleting old indices"
+        options:
+          timeout_override:
+          continue_if_exception: False
+          disable_action: False
+          ignore_empty_list: True
+        filters:
+        - filtertype: age
+          source: name
+          direction: older
+          timestring: '%Y.%m.%d'
+          unit: days
+          unit_count: 7
+          field:
+          stats_result:
+          epoch:
+          exclude: False
+      2:
+        action: delete_indices
+        description: "Clean up ES by magma log indices if it consumes more than 75% of volume"
+        options:
+          timeout_override:
+          continue_if_exception: False
+          disable_action: False
+          ignore_empty_list: True
+        filters:
+        - filtertype: pattern
+          kind: prefix
+          value: magma-
+        - filtertype: space
+          disk_space: 10
+          use_age: True
+          source: creation_date            
+  config_yml: |-
+    ---
+    client:
+      hosts:
+        - elasticsearch-master:9200
+      port: 9200
+      use_ssl: false
+    logging:
+      loglevel: "INFO"
