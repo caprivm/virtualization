@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-09-16T21:18:18.609Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36" etag="IiaPfNSbAeqZvRZBVQDo" version="15.0.6" type="github">
+<mxfile host="app.diagrams.net" modified="2021-09-16T21:21:09.802Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36" etag="prFLTfBKTXfwrzXNCNdY" version="15.0.6" type="github">
   <diagram id="_QIs-j70t5btE_n-gANe" name="Page-1">
     <mxGraphModel dx="1468" dy="831" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -371,9 +371,6 @@
         </mxCell>
         <mxCell id="9EZD8ul-9Ztm1YG5Jbka-117" value="" style="html=1;whiteSpace=wrap;shape=isoCube2;backgroundOutline=1;isoAngle=15;rounded=0;shadow=0;glass=0;sketch=1;fontFamily=Helvetica;fontSize=9;fillColor=#f5f5f5;aspect=fixed;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
           <mxGeometry x="385.4" y="150" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="9EZD8ul-9Ztm1YG5Jbka-165" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://influxdata.github.io/branding/img/downloads/influxdata-logo--symbol--pool-alpha.png;" vertex="1" parent="1">
-          <mxGeometry x="163" y="850" width="150" height="150" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
