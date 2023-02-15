@@ -1,0 +1,82 @@
+# Source: oai-spgwu-tiny/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: oai-5gcn
+  name: oai-spgwu-tiny
+  labels:
+    helm.sh/chart: oai-spgwu-tiny-v1.5.0
+    app.kubernetes.io/name: oai-spgwu-tiny
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-spgwu-tiny
+      app.kubernetes.io/instance: release-name
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oai-spgwu-tiny
+        app.kubernetes.io/instance: release-name
+    {{- if .Values.multus.create }}
+      annotations:
+        k8s.v1.cni.cncf.io/networks: >-
+          [{
+                 "name": "oai-spgwu-tiny-n3-net1",
+                 "default-route": ["172.21.7.254"]
+          }]
+    {{- end }}
+    spec:
+      securityContext:
+        runAsGroup: 0
+        runAsUser: 0
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: tcpdump
+        image: "docker.io/corfr/tcpdump:latest"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+            privileged: true
+        command:
+          - /bin/sleep
+          - infinity
+      - name: spgwu
+        image: "docker.io/oaisoftwarealliance/oai-spgwu-tiny:v1.5.0"
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /openair-spgwu-tiny/etc
+            name: configuration
+        securityContext:
+            privileged: true
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-spgwu-tiny/bin/healthcheck.sh
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        ports:
+        - containerPort: 8805
+          name: pfcp
+        - containerPort: 2152
+          name: s1u
+        command:
+          - /openair-spgwu-tiny/bin/oai_spgwu
+          - -c
+          - /openair-spgwu-tiny/etc/spgw_u.conf
+          - -o
+      volumes:
+      - configMap:
+          name: oai-spgwu-tiny-configmap
+        name: configuration
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccountName: oai-spgwu-tiny
+      terminationGracePeriodSeconds: 5

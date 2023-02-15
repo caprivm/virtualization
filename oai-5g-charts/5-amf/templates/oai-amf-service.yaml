@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: oai-5gcn
+  name: oai-amf-svc-ngap
+  labels:
+    helm.sh/chart: oai-amf-v1.5.0
+    app.kubernetes.io/name: oai-amf
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: NodePort
+  clusterIP: 10.233.35.154
+  ports:
+    - name: oai-amf
+      port: 38412
+      targetPort: 38412
+      protocol: SCTP
+      nodePort: 30412
+  selector:
+    app.kubernetes.io/name: oai-amf
+    app.kubernetes.io/instance: release-name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: oai-5gcn
+  name: oai-amf-svc
+  labels:
+    helm.sh/chart: oai-amf-v1.5.0
+    app.kubernetes.io/name: oai-amf
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  clusterIP: 10.233.10.242
+  ports:
+    - name: http1
+      port: 80
+      targetPort: 80
+      protocol: TCP
+    - name: http2
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: oai-amf
+    app.kubernetes.io/instance: release-name

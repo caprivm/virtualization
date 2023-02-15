@@ -1,0 +1,28 @@
+# Source: oai-udr/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: oai-5gcn
+  name: oai-udr-configmap
+data:
+  instance: "0"
+  mySqlDb: "oai_db"
+  mySqlPass: "linux"
+  mySqlServer: "mysql"
+  mySqlUser: "root"
+  waitMysql: "120"
+  dbConnectionTimeout: "300"
+  nrfApiVersion: "v1"
+  nrfFqdn: "oai-nrf-svc"
+  nrfIpv4Address: "10.233.19.104"
+  nrfPort: "80"
+  pidDirectory: "/var/run"
+  registerNrf: "yes"
+  sbiIfName: "eth0"
+  sbiPortHttp1: "80"
+  sbiPortHttp2: "8080"
+  tz: "Europe/Paris"
+  udrApiVersion: "v1"
+  udrname: "oai-udr"
+  useFqdnDns: "no"
+  usehttp2: "no"

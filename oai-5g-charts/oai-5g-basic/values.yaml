@@ -1,0 +1,43 @@
+mysql:
+  enabled: true
+  weight: 0
+  imagePullPolicy: IfNotPresent
+  oai5gdatabase: basic
+  imagePullSecrets:
+    - name: regcred
+  persistence:
+    enabled: false
+
+oai-nrf:
+  enabled: true
+  weight: 0
+
+oai-udr:
+  enabled: true
+  weight: 1
+
+oai-udm:
+  enabled: true
+  weight: 2
+
+oai-ausf:
+  enabled: true
+  weight: 3
+
+oai-amf:
+  enabled: true
+  weight: 4
+  multus:
+    create: false
+
+oai-upf:
+  enabled: true
+  weight: 5
+  multus:
+    create: false
+
+oai-smf:
+  enabled: true
+  weight: 6
+  multus:
+    create: false

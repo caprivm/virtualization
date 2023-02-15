@@ -1,0 +1,157 @@
+# Source: oai-udm/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: oai-5gcn
+  name: oai-udm
+  labels:
+    helm.sh/chart: oai-udm-v1.5.0
+    app.kubernetes.io/name: oai-udm
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-udm
+      app.kubernetes.io/instance: release-name
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oai-udm
+        app.kubernetes.io/instance: release-name
+    spec:
+      securityContext:
+        runAsGroup: 0
+        runAsUser: 0
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: tcpdump
+        image: "docker.io/corfr/tcpdump:latest"
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sleep
+          - infinity
+      - name: udm
+        image: "docker.io/oaisoftwarealliance/oai-udm:v1.5.0"
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: tz
+          - name: INSTANCE
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: instance
+          - name: PID_DIRECTORY
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: pidDirectory
+          - name: UDM_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: udmName
+          - name: SBI_IF_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: sbiIfName
+          - name: SBI_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: sbiPortHttp1
+          - name: SBI_HTTP2_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: sbiPortHttp2
+          - name: USE_HTTP2
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: useHttp2
+          - name: UDM_VERSION_NB
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: udmApiVersionNb
+          - name: USE_FQDN_DNS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: useFqdnDns
+          - name: UDR_IP_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: udrIpAddress
+          - name: UDR_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: udrPort
+          - name: UDR_VERSION_NB
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: udrApiVersionNb
+          - name: UDR_FQDN
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: udrFqdn
+          - name: REGISTER_NRF
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: nrfRegistration
+          - name: NRF_IPV4_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: nrfIpAddress
+          - name: NRF_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: nrfPort
+          - name: NRF_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: nrfApiVersionNb
+          - name: NRF_FQDN
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udm-configmap
+                key: nrfFqdn
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-udm/bin/healthcheck.sh
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        securityContext:
+            privileged: false
+        ports:
+        - containerPort: 80
+          name: http1
+        - containerPort: 8080
+          name: http2
+      volumes:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccountName: oai-udm-sa
+      terminationGracePeriodSeconds: 5

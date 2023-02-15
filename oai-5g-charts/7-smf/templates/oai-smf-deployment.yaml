@@ -1,0 +1,83 @@
+# Source: oai-smf/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: oai-5gcn
+  name: oai-smf
+  labels:
+    helm.sh/chart: oai-smf-v1.5.0
+    app.kubernetes.io/name: oai-smf
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-smf
+      app.kubernetes.io/instance: release-name
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oai-smf
+        app.kubernetes.io/instance: release-name
+    {{- if .Values.multus.create }}
+      annotations:
+        k8s.v1.cni.cncf.io/networks: >-
+          [{
+                 "name": "oai-smf-n4-net1",
+                 "default-route": ["172.21.7.254"]
+          }]
+    {{- end }}
+    spec:
+      securityContext:
+        runAsGroup: 0
+        runAsUser: 0
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: tcpdump
+        image: "docker.io/corfr/tcpdump:latest"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+            privileged: false
+        command:
+          - /bin/sleep
+          - infinity
+      - name: smf
+        image: "docker.io/oaisoftwarealliance/oai-smf:v1.5.0"
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /openair-smf/etc
+            name: configuration
+        securityContext:
+            privileged: false
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-smf/bin/healthcheck.sh
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        ports:
+        - containerPort: 8805
+          name: oai-smf
+        - containerPort: 80
+          name: http1
+        - containerPort: 8080
+          name: http2
+        command:
+          - /openair-smf/bin/oai_smf
+          - -c
+          - /openair-smf/etc/smf.conf
+          - -o
+      volumes:
+      - configMap:
+          name: oai-smf-configmap
+        name: configuration
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      serviceAccountName: oai-smf-sa
+      terminationGracePeriodSeconds: 5

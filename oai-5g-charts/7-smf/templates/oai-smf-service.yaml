@@ -1,0 +1,37 @@
+# Source: oai-smf/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: oai-5gcn
+  name: oai-smf-svc
+  labels:
+    helm.sh/chart: oai-smf-v1.5.0
+    app.kubernetes.io/name: oai-smf
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  clusterIP: 10.233.42.105
+  selector:
+    app.kubernetes.io/name: oai-smf
+    app.kubernetes.io/instance: release-name
+  ports:
+    {{- if .Values.multus.create }}
+    - name: oai-smf
+      # Port accessible outside cluster
+      port: 8805
+      # Port to forward to inside the pod
+      targetPort: 8805
+      protocol: UDP
+    {{ end }}
+    - name: http1
+      port: 80
+      # Port to forward to inside the pod
+      targetPort: 80
+      protocol: TCP
+    - name: http2
+      port: 8080
+      # Port to forward to inside the pod
+      targetPort: 8080
+      protocol: TCP

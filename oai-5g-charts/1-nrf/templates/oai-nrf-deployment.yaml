@@ -1,0 +1,98 @@
+# Source: oai-nrf/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: oai-5gcn
+  name: oai-nrf
+  labels:
+    helm.sh/chart: oai-nrf-v1.5.0
+    app.kubernetes.io/name: oai-nrf
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-nrf
+      app.kubernetes.io/instance: release-name
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oai-nrf
+        app.kubernetes.io/instance: release-name
+    spec:
+      securityContext:
+        runAsGroup: 0
+        runAsUser: 0
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: tcpdump
+        image: "corfr/tcpdump:latest"
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sleep
+          - infinity
+      - name: nrf
+        image: "docker.io/oaisoftwarealliance/oai-nrf:v1.5.0"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: false
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-nrf/bin/healthcheck.sh
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        ports:
+        - containerPort: 80
+          name: http1
+          protocol: TCP
+        - containerPort: 8080
+          name: http2
+          protocol: TCP
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: oai-nrf-configmap
+                key: tz
+          - name: NRF_INTERFACE_NAME_FOR_SBI
+            valueFrom:
+              configMapKeyRef:
+                name: oai-nrf-configmap
+                key: nrfInterfaceNameForSBI
+          - name: NRF_INTERFACE_PORT_FOR_SBI
+            valueFrom:
+              configMapKeyRef:
+                name: oai-nrf-configmap
+                key: nrfInterfacePortForSBI
+          - name: NRF_INTERFACE_HTTP2_PORT_FOR_SBI
+            valueFrom:
+              configMapKeyRef:
+                name: oai-nrf-configmap
+                key: nrfInterfaceHttp2PortForSBI
+          - name: NRF_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: oai-nrf-configmap
+                key: nrfApiVersion
+          - name: INSTANCE
+            valueFrom:
+              configMapKeyRef:
+                name: oai-nrf-configmap
+                key: instance
+          - name: PID_DIRECTORY
+            valueFrom:
+              configMapKeyRef:
+                name: oai-nrf-configmap
+                key: pidDirectory
+      volumes:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      serviceAccountName: oai-nrf-sa
+      terminationGracePeriodSeconds: 5

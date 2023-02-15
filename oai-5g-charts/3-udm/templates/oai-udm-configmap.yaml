@@ -1,0 +1,26 @@
+# Source: oai-udm/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: oai-5gcn
+  name: oai-udm-configmap
+data:
+  instance: "0"
+  nrfRegistration: "yes"
+  nrfApiVersionNb: "v1"
+  nrfFqdn: "oai-nrf-svc"
+  nrfIpAddress: "10.233.19.104"
+  nrfPort: "80"
+  pidDirectory: "/var/run"
+  sbiIfName: "eth0"
+  sbiPortHttp1: "80"
+  sbiPortHttp2: "8080"
+  tz: "Europe/Paris"
+  udmApiVersionNb: "v1"
+  udmName: "oai-udm"
+  udrApiVersionNb: "v1"
+  udrFqdn: "oai-udr-svc"
+  udrIpAddress: "10.233.51.216"
+  udrPort: "80"
+  useFqdnDns: "no"
+  useHttp2: "no"

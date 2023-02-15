@@ -1,0 +1,155 @@
+# Source: oai-ausf/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: oai-5gcn
+  name: oai-ausf
+  labels:
+    helm.sh/chart: oai-ausf-v1.5.0
+    app.kubernetes.io/name: oai-ausf
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-ausf
+      app.kubernetes.io/instance: release-name
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oai-ausf
+        app.kubernetes.io/instance: release-name
+    spec:
+      securityContext:
+        runAsGroup: 0
+        runAsUser: 0
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: tcpdump
+        image: "docker.io/corfr/tcpdump:latest"
+        securityContext:
+            privileged: false
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sleep
+          - infinity
+      - name: ausf
+        image: "docker.io/oaisoftwarealliance/oai-ausf:v1.5.0"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+            privileged: false
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-ausf/bin/healthcheck.sh
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        ports:
+        - containerPort: 80
+          name: http1
+        - containerPort: 8080
+          name: http2
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: tz
+          - name: INSTANCE_ID
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: instanceId
+          - name: PID_DIR
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: pidDirectory
+          - name: REGISTER_NRF
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: registerNrf
+          - name: AUSF_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: ausfName
+          - name: SBI_IF_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: sbiIfName
+          - name: SBI_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: sbiPortHttp1
+          - name: SBI_HTTP2_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: sbiPortHttp2
+          - name: USE_HTTP2
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: useHttp2
+          - name: USE_FQDN_DNS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: useFqdnDns
+          - name: UDM_IP_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: udmIpAddress
+          - name: UDM_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: udmPort
+          - name: UDM_VERSION_NB
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: udmVersionNb
+          - name: UDM_FQDN
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: udmFqdn
+          - name: NRF_IPV4_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: nrfIpAddress
+          - name: NRF_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: nrfPort
+          - name: NRF_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: nrfApiVersion
+          - name: NRF_FQDN
+            valueFrom:
+              configMapKeyRef:
+                name: oai-ausf-configmap
+                key: nrfFqdn
+      volumes:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccountName: oai-ausf-sa
+      terminationGracePeriodSeconds: 5
+

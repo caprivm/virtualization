@@ -1,0 +1,22 @@
+{{- if .Values.multus.create }}
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  namespace: oai-5gcn
+  name: oai-spgwu-tiny-n3-net1
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master":"eno2.100",
+      "mode": "bridge",
+      "ipam": {
+        "type": "static",
+        "addresses": [
+                {
+                        "address":"172.21.6.201/22"
+                }
+        ]
+      }
+    }'
+{{- end }}

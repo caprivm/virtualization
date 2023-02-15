@@ -1,0 +1,169 @@
+# Source: oai-udr/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oai-udr
+  namespace: oai-5gcn
+  labels:
+    helm.sh/chart: oai-udr-v1.5.0
+    app.kubernetes.io/name: oai-udr
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v1.5.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-udr
+      app.kubernetes.io/instance: release-name
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: oai-udr
+        app.kubernetes.io/instance: release-name
+    spec:
+      securityContext:
+        runAsGroup: 0
+        runAsUser: 0
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: tcpdump
+        image: "docker.io/corfr/tcpdump:latest"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+            privileged: false
+        command:
+          - /bin/sleep
+          - infinity
+      - name: udr
+        image: "docker.io/oaisoftwarealliance/oai-udr:v1.5.0"
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-udr/bin/healthcheck.sh
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        securityContext:
+            privileged: false
+        ports:
+        - containerPort: 80
+          name: http1
+        - containerPort: 8080
+          name: http2
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: tz
+          - name: UDR_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: udrname
+          - name: INSTANCE
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: instance
+          - name: PID_DIRECTORY
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: pidDirectory
+          - name: USE_FQDN_DNS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: useFqdnDns
+          - name: UDR_INTERFACE_NAME_FOR_NUDR
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: sbiIfName
+          - name: REGISTER_NRF
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: registerNrf
+          - name: USE_HTTP2
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: usehttp2
+          - name: UDR_INTERFACE_PORT_FOR_NUDR
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: sbiPortHttp1
+          - name: UDR_INTERFACE_HTTP2_PORT_FOR_NUDR
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: sbiPortHttp2
+          - name: UDR_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: udrApiVersion
+          - name: NRF_IPV4_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: nrfIpv4Address
+          - name: NRF_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: nrfPort
+          - name: NRF_API_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: nrfApiVersion
+          - name: NRF_FQDN
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: nrfFqdn
+          - name: MYSQL_IPV4_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: mySqlServer
+          - name: MYSQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: mySqlUser
+          - name: DB_CONNECTION_TIMEOUT
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: dbConnectionTimeout
+          - name: MYSQL_PASS
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: mySqlPass
+          - name: MYSQL_DB
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: mySqlDb
+          - name: WAIT_MYSQL
+            valueFrom:
+              configMapKeyRef:
+                name: oai-udr-configmap
+                key: waitMysql
+      volumes:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccountName: oai-udr-sa
+      terminationGracePeriodSeconds: 5
