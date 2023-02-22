@@ -1,46 +1,71 @@
-# Source: oai-nrf/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: oai-5gcn
-  name: oai-nrf
+  name: {{ .Chart.Name }}
   labels:
-    helm.sh/chart: oai-nrf-v1.5.0
-    app.kubernetes.io/name: oai-nrf
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v1.5.0"
-    app.kubernetes.io/managed-by: Helm
+    {{- include "oai-nrf.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: oai-nrf
-      app.kubernetes.io/instance: release-name
+      {{- include "oai-nrf.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: oai-nrf
-        app.kubernetes.io/instance: release-name
+        {{- include "oai-nrf.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
-        runAsGroup: 0
-        runAsUser: 0
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.imagePullSecrets.create }}
       imagePullSecrets:
-      - name: regcred
+        {{ toYaml .Values.imagePullSecrets.pullSecrets | indent 8 }}
+      {{- end }}
       containers:
       - name: tcpdump
-        image: "corfr/tcpdump:latest"
-        imagePullPolicy: IfNotPresent
+        image: "{{ .Values.tcpdumpImage.registry }}/{{ .Values.tcpdumpImage.repository }}:{{ .Values.tcpdumpImage.version }}"
+        imagePullPolicy: {{ .Values.tcpdumpImage.pullPolicy }}
+        {{- if .Values.resources.enabled}}
+        resources:
+          requests:
+            memory: {{ .Values.resources.tcpdump.requests.memory | quote }}
+            cpu: {{ .Values.resources.tcpdump.requests.cpu | quote }}
+          limits:
+            memory: {{ .Values.resources.tcpdump.limits.memory | quote }}
+            cpu: {{ .Values.resources.tcpdump.limits.cpu | quote }}
+        {{- end}}
+        {{- if .Values.start.tcpdump}}
+        command:
+          - /bin/sh
+          - -c
+          - /usr/sbin/tcpdump -i any -w /pcap/{{ .Chart.Name }}_`date +%Y-%m-%d_%H_%M-%S-%Z`.pcap
+        {{- else}}
         command:
           - /bin/sleep
           - infinity
+        {{- end}}
+        {{- if .Values.persistence.enabled}}
+        volumeMounts:
+        - mountPath: "/pcap"
+          name: tcpdump-5gcn-volume
+        {{- end}}
       - name: nrf
-        image: "docker.io/oaisoftwarealliance/oai-nrf:v1.5.0"
+        image: "{{ .Values.nrfImage.registry }}/{{ .Values.nrfImage.repository }}:{{ .Values.nrfImage.version }}"
         imagePullPolicy: IfNotPresent
+        {{- if .Values.resources.enabled}}
+        resources:
+          requests:
+            memory: {{ .Values.resources.nrf.requests.memory | quote }}
+            cpu: {{ .Values.resources.nrf.requests.cpu | quote }}
+          limits:
+            memory: {{ .Values.resources.nrf.limits.memory | quote }}
+            cpu: {{ .Values.resources.nrf.limits.cpu | quote }}
+        {{- end}}
         securityContext:
-          privileged: false
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        {{- if .Values.readinessProbe}}
         readinessProbe:
           exec:
             command:
@@ -48,6 +73,16 @@ spec:
             - /openair-nrf/bin/healthcheck.sh
           initialDelaySeconds: 2
           periodSeconds: 3
+        {{- end}}
+        {{- if .Values.livenessProbe}}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-nrf/bin/healthcheck.sh
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        {{- end}}
         ports:
         - containerPort: 80
           name: http1
@@ -59,40 +94,55 @@ spec:
           - name: TZ
             valueFrom:
               configMapKeyRef:
-                name: oai-nrf-configmap
+                name: {{ .Chart.Name }}-configmap
                 key: tz
           - name: NRF_INTERFACE_NAME_FOR_SBI
             valueFrom:
               configMapKeyRef:
-                name: oai-nrf-configmap
+                name: {{ .Chart.Name }}-configmap
                 key: nrfInterfaceNameForSBI
           - name: NRF_INTERFACE_PORT_FOR_SBI
             valueFrom:
               configMapKeyRef:
-                name: oai-nrf-configmap
+                name: {{ .Chart.Name }}-configmap
                 key: nrfInterfacePortForSBI
           - name: NRF_INTERFACE_HTTP2_PORT_FOR_SBI
             valueFrom:
               configMapKeyRef:
-                name: oai-nrf-configmap
+                name: {{ .Chart.Name }}-configmap
                 key: nrfInterfaceHttp2PortForSBI
           - name: NRF_API_VERSION
             valueFrom:
               configMapKeyRef:
-                name: oai-nrf-configmap
+                name: {{ .Chart.Name }}-configmap
                 key: nrfApiVersion
           - name: INSTANCE
             valueFrom:
               configMapKeyRef:
-                name: oai-nrf-configmap
+                name: {{ .Chart.Name }}-configmap
                 key: instance
           - name: PID_DIRECTORY
             valueFrom:
               configMapKeyRef:
-                name: oai-nrf-configmap
+                name: {{ .Chart.Name }}-configmap
                 key: pidDirectory
+      {{- if .Values.persistence.enabled}}
       volumes:
+      - name: tcpdump-5gcn-volume
+        persistenceVolumeClaim:
+          claimName: {{ .Values.persistence.tcpdump.claimName }}
+      - name: 
+      {{-end}}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      serviceAccountName: oai-nrf-sa
-      terminationGracePeriodSeconds: 5
+      {{- if .Values.serviceAccount.enabled}}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{-end}}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- if .Values.nodeSelector}}
+      nodeSelector: 
+         {{- toYaml .Values.nodeSelector | nindent 12 }}
+      {{- end }}
+      {{- if .Values.nodeName}}
+      nodeName: {{ .Values.nodeName }}
+      {{- end }}

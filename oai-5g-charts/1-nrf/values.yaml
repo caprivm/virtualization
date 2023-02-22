@@ -1,0 +1,77 @@
+replicas: 1
+
+imagePullSecrets:
+  create: false
+  pullSecrets:
+    - name: ""
+
+start:
+  tcpdump: false
+
+service:
+  type: ClusterIP
+  clusterIP: 10.233.19.104
+
+nrfImage:
+  registry: docker.io
+  repository: oaisoftwarealliance/oai-nrf
+  tag: v1.5.0
+  pullPolicy: IfNotPresent
+
+tcpdumpImage:
+  registry: docker.io
+  repository: corfr/tcpdump
+  version: latest
+  pullPolicy: IfNotPresent
+
+nrfConfig:
+  tz: "Europe/Paris"
+  nrfApiVersion: "v1"
+  nrfInterfaceHttp2PortForSBI: "8080"
+  nrfInterfaceNameForSBI: "eth0"
+  nrfInterfacePortForSBI: "80"
+  instance: "0"
+  pidDirectory: "/var/run"
+
+serviceAccount:
+  enabled: true
+  name: "oai-nrf-sa"
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+securityContext:
+  privileged: false
+
+persistence:
+  enabled: false
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  tcpdump:
+    claimName: tcpdump
+    size: 1Gi
+
+resources:
+  enabled: false
+  limits:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    nrf:
+      cpu: 100m
+      memory: 128Mi
+  requests:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    nrf:
+      cpu: 100m
+      memory: 128Mi
+
+readinessProbe: true
+livenessProbe: false
+terminationGracePeriodSeconds: 5
+nodeSelector: {}
+nodeName:

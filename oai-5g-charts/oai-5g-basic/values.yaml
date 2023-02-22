@@ -11,6 +11,19 @@ mysql:
 oai-nrf:
   enabled: true
   weight: 0
+  start:
+    tcpdump: false
+  service:
+    type: ClusterIP
+    clusterIP: 10.233.19.104
+  nrfConfig:
+    tz: "Europe/Paris"
+    nrfApiVersion: "v1"
+    nrfInterfaceHttp2PortForSBI: "8080"
+    nrfInterfaceNameForSBI: "eth0"
+    nrfInterfacePortForSBI: "80"
+    instance: "0"
+    pidDirectory: "/var/run"
 
 oai-udr:
   enabled: true

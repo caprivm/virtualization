@@ -1,0 +1,13 @@
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.persistence.tcpdump.claimName }}
+spec:
+  accessModes:
+    {{ toYaml .Values.persistence.accessModes | indent 4 }}
+  storageClassName: {{ .Values.persistence.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.tcpdump.size }}
+{{- end }}

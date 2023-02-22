@@ -1,14 +1,8 @@
-# Source: oai-nrf/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: oai-5gcn
-  name: oai-nrf-configmap
+  name: {{ .Chart.Name }}-configmap
 data:
-  tz: "Europe/Paris"
-  nrfApiVersion: "v1"
-  nrfInterfaceHttp2PortForSBI: "8080"
-  nrfInterfaceNameForSBI: "eth0"
-  nrfInterfacePortForSBI: "80"
-  instance: "0"
-  pidDirectory: "/var/run"
+  {{- range $key, $val := .Values.config }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
