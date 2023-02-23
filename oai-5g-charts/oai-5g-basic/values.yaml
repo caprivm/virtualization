@@ -16,6 +16,11 @@ oai-nrf:
   service:
     type: ClusterIP
     clusterIP: 10.233.19.104
+  nrfImage:
+    registry: docker.io
+    repository: oaisoftwarealliance/oai-nrf
+    tag: v1.5.0
+    pullPolicy: IfNotPresent
   nrfConfig:
     tz: "Europe/Paris"
     nrfApiVersion: "v1"
@@ -28,6 +33,37 @@ oai-nrf:
 oai-udr:
   enabled: true
   weight: 1
+  start:
+    tcpdump: false
+  service:
+    type: ClusterIP
+    clusterIP: 10.233.51.216
+  nrfImage:
+    registry: docker.io
+    repository: oaisoftwarealliance/oai-udr
+    tag: v1.5.0
+    pullPolicy: IfNotPresent
+  udrConfig:
+    instance: "0"
+    mySqlDb: "oai_db"
+    mySqlPass: "linux"
+    mySqlServer: "mysql"
+    mySqlUser: "root"
+    waitMysql: "120"
+    dbConnectionTimeout: "300"
+    nrfApiVersion: "v1"
+    nrfFqdn: "oai-nrf-svc"
+    nrfPort: "80"
+    pidDirectory: "/var/run"
+    registerNrf: "yes"
+    sbiIfName: "eth0"
+    sbiPortHttp1: "80"
+    sbiPortHttp2: "8080"
+    tz: "Europe/Paris"
+    udrApiVersion: "v1"
+    udrName: "oai-udr"
+    useFqdnDns: "no"
+    usehttp2: "no"
 
 oai-udm:
   enabled: true

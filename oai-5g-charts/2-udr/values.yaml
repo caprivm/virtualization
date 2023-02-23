@@ -10,11 +10,11 @@ start:
 
 service:
   type: ClusterIP
-  clusterIP: 10.233.19.104
+  clusterIP: 10.233.51.216
 
-nrfImage:
+udrImage:
   registry: docker.io
-  repository: oaisoftwarealliance/oai-nrf
+  repository: oaisoftwarealliance/oai-udr
   tag: v1.5.0
   pullPolicy: IfNotPresent
 
@@ -24,18 +24,31 @@ tcpdumpImage:
   version: latest
   pullPolicy: IfNotPresent
 
-nrfConfig:
-  tz: "Europe/Paris"
-  nrfApiVersion: "v1"
-  nrfInterfaceHttp2PortForSBI: "8080"
-  nrfInterfaceNameForSBI: "eth0"
-  nrfInterfacePortForSBI: "80"
+udrConfig:
   instance: "0"
+  mySqlDb: "oai_db"
+  mySqlPass: "linux"
+  mySqlServer: "mysql"
+  mySqlUser: "root"
+  waitMysql: "120"
+  dbConnectionTimeout: "300"
+  nrfApiVersion: "v1"
+  nrfFqdn: "oai-nrf-svc"
+  nrfPort: "80"
   pidDirectory: "/var/run"
+  registerNrf: "yes"
+  sbiIfName: "eth0"
+  sbiPortHttp1: "80"
+  sbiPortHttp2: "8080"
+  tz: "Europe/Paris"
+  udrApiVersion: "v1"
+  udrName: "oai-udr"
+  useFqdnDns: "no"
+  usehttp2: "no"
 
 serviceAccount:
   enabled: true
-  name: "oai-nrf-sa"
+  name: "oai-udr-sa"
 
 podSecurityContext:
   runAsUser: 0
@@ -50,7 +63,7 @@ persistence:
     - ReadWriteOnce
   storageClassName: longhorn
   tcpdump:
-    claimName: oai-nrf-tcpdump
+    claimName: oai-udr-tcpdump
     size: 1Gi
 
 resources:
@@ -59,14 +72,14 @@ resources:
     tcpdump:
       cpu: 100m
       memory: 128Mi
-    nrf:
+    udr:
       cpu: 100m
       memory: 128Mi
   requests:
     tcpdump:
       cpu: 100m
       memory: 128Mi
-    nrf:
+    udr:
       cpu: 100m
       memory: 128Mi
 

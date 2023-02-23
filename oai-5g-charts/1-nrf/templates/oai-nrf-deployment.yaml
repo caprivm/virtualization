@@ -53,7 +53,7 @@ spec:
         {{- end}}
       - name: nrf
         image: "{{ .Values.nrfImage.registry }}/{{ .Values.nrfImage.repository }}:{{ .Values.nrfImage.version }}"
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: {{ .Values.nrfImage.pullPolicy }}
         {{- if .Values.resources.enabled}}
         resources:
           requests:
@@ -84,10 +84,10 @@ spec:
           periodSeconds: 5
         {{- end}}
         ports:
-        - containerPort: 80
+        - containerPort: {{ .Values.nrfConfig.nrfInterfacePortForSBI }}
           name: http1
           protocol: TCP
-        - containerPort: 8080
+        - containerPort: {{ .Values.nrfConfig.nrfInterfaceHttp2PortForSBI }}
           name: http2
           protocol: TCP
         env:
@@ -126,12 +126,11 @@ spec:
               configMapKeyRef:
                 name: {{ .Chart.Name }}-configmap
                 key: pidDirectory
-      {{- if .Values.persistence.enabled}}
       volumes:
+      {{- if .Values.persistence.enabled}}
       - name: tcpdump-5gcn-volume
         persistenceVolumeClaim:
           claimName: {{ .Values.persistence.tcpdump.claimName }}
-      - name: 
       {{-end}}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
