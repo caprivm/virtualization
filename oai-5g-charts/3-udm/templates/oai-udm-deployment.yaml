@@ -1,44 +1,86 @@
-# Source: oai-udm/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: oai-5gcn
-  name: oai-udm
+  name: {{ .Chart.Name }}
   labels:
-    helm.sh/chart: oai-udm-v1.5.0
-    app.kubernetes.io/name: oai-udm
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v1.5.0"
-    app.kubernetes.io/managed-by: Helm
+    {{- include "oai-udm.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: oai-udm
-      app.kubernetes.io/instance: release-name
+      {{- include "oai-udm.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: oai-udm
-        app.kubernetes.io/instance: release-name
+        {{- include "oai-udm.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
-        runAsGroup: 0
-        runAsUser: 0
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.imagePullSecrets.create }}
       imagePullSecrets:
-      - name: regcred
+        {{ toYaml .Values.imagePullSecrets.pullSecrets | indent 8 }}
+      {{- end }}
       containers:
       - name: tcpdump
-        image: "docker.io/corfr/tcpdump:latest"
-        imagePullPolicy: IfNotPresent
+        image: "{{ .Values.tcpdumpImage.registry }}/{{ .Values.tcpdumpImage.repository }}:{{ .Values.tcpdumpImage.tag }}"
+        imagePullPolicy: {{ .Values.tcpdumpImage.pullPolicy }}
+        {{- if .Values.resources.enabled}}
+        resources:
+          requests:
+            memory: {{ .Values.resources.tcpdump.requests.memory | quote }}
+            cpu: {{ .Values.resources.tcpdump.requests.cpu | quote }}
+          limits:
+            memory: {{ .Values.resources.tcpdump.limits.memory | quote }}
+            cpu: {{ .Values.resources.tcpdump.limits.cpu | quote }}
+        {{- end}}
+        {{- if .Values.start.tcpdump}}
         command:
           - /bin/sleep
           - infinity
+        {{- else}}
+        command:
+          - /bin/sleep
+          - infinity
+        {{- end}}
+        {{- if .Values.persistence.enabled}}
+        volumeMounts:
+        - mountPath: "/pcap"
+          name: tcpdump-5gcn-volume
+        {{- end}}
       - name: udm
-        image: "docker.io/oaisoftwarealliance/oai-udm:v1.5.0"
-        imagePullPolicy: IfNotPresent
+        image: "{{ .Values.udmImage.registry }}/{{ .Values.udmImage.repository }}:{{ .Values.udmImage.tag }}"
+        imagePullPolicy: {{ .Values.udmImage.pullPolicy }}
+        {{- if .Values.resources.enabled}}
+        resources:
+          requests:
+            memory: {{ .Values.resources.udm.requests.memory | quote }}
+            cpu: {{ .Values.resources.udm.requests.cpu | quote }}
+          limits:
+            memory: {{ .Values.resources.udm.limits.memory | quote }}
+            cpu: {{ .Values.resources.udm.limits.cpu | quote }}
+        {{- end}}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        {{- if .Values.readinessProbe}}
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-udm/bin/healthcheck.sh
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        {{- end}}
+        {{- if .Values.livenessProbe}}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - /openair-udm/bin/healthcheck.sh
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        {{- end}}
         env:
           - name: TZ
             valueFrom:
@@ -145,13 +187,27 @@ spec:
         securityContext:
             privileged: false
         ports:
-        - containerPort: 80
+        - containerPort: {{ .Values.udmConfig.sbiPortHttp1 }}
           name: http1
-        - containerPort: 8080
+        - containerPort: {{ .Values.udmConfig.sbiPortHttp2 }}
           name: http2
       volumes:
+      {{- if .Values.persistence.enabled}}
+      - name: tcpdump-5gcn-volume
+        persistenceVolumeClaim:
+          claimName: {{ .Values.persistence.tcpdump.claimName }}
+      {{- end}}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      {{- if .Values.serviceAccount.enabled}}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end}}
       schedulerName: default-scheduler
-      serviceAccountName: oai-udm-sa
-      terminationGracePeriodSeconds: 5
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- if .Values.nodeSelector}}
+      nodeSelector: 
+         {{- toYaml .Values.nodeSelector | nindent 12 }}
+      {{- end }}
+      {{- if .Values.nodeName}}
+      nodeName: {{ .Values.nodeName }}
+      {{- end }}

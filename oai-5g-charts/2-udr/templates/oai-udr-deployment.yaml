@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "oai-udr.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       {{- include "oai-udr.selectorLabels" . | nindent 6 }}
@@ -51,7 +51,7 @@ spec:
           name: tcpdump-5gcn-volume
         {{- end}}
       - name: udr
-        image: "{{ .Values.udrImage.registry }}/{{ .Values.udrImage.repository }}:{{ .Values.udrImage.version }}"
+        image: "{{ .Values.udrImage.registry }}/{{ .Values.udrImage.repository }}:{{ .Values.udrImage.tag }}"
         imagePullPolicy: {{ .Values.udrImage.pullPolicy }}
         {{- if .Values.resources.enabled}}
         resources:
@@ -198,12 +198,13 @@ spec:
       - name: tcpdump-5gcn-volume
         persistenceVolumeClaim:
           claimName: {{ .Values.persistence.tcpdump.claimName }}
-      {{-end}}
+      {{- end}}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      schedulerName: default-scheduler
       {{- if .Values.serviceAccount.enabled}}
       serviceAccountName: {{ .Values.serviceAccount.name }}
-      {{-end}}
+      {{- end}}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- if .Values.nodeSelector}}
       nodeSelector: 

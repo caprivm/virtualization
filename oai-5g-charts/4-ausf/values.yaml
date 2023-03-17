@@ -10,11 +10,11 @@ start:
 
 service:
   type: ClusterIP
-  clusterIP: 10.233.19.104
+  clusterIP: 10.233.51.216
 
-nrfImage:
+ausfImage:
   registry: docker.io
-  repository: oaisoftwarealliance/oai-nrf
+  repository: oaisoftwarealliance/oai-ausf
   tag: v1.5.0
   pullPolicy: IfNotPresent
 
@@ -24,18 +24,29 @@ tcpdumpImage:
   tag: latest
   pullPolicy: IfNotPresent
 
-nrfConfig:
-  tz: "Europe/Paris"
+ausfConfig:
+  ausfName: "oai-ausf"
+  instanceId: "0"
   nrfApiVersion: "v1"
-  nrfInterfaceHttp2PortForSBI: "8080"
-  nrfInterfaceNameForSBI: "eth0"
-  nrfInterfacePortForSBI: "80"
-  instance: "0"
+  nrfFqdn: "oai-nrf-svc"
+  nrfIpAddress: "10.233.19.104"
+  nrfPort: "80"
   pidDirectory: "/var/run"
+  registerNrf: "yes"
+  sbiIfName: "eth0"
+  sbiPortHttp1: "80"
+  sbiPortHttp2: "8080"
+  tz: "Europe/Paris"
+  udmFqdn: "oai-udm-svc"
+  udmIpAddress: "10.233.58.64"
+  udmPort: "80"
+  udmVersionNb: "v1"
+  useFqdnDns: "no"
+  useHttp2: "no"
 
 serviceAccount:
   enabled: true
-  name: "oai-nrf-sa"
+  name: "oai-ausf-sa"
 
 podSecurityContext:
   runAsUser: 0
@@ -50,7 +61,7 @@ persistence:
     - ReadWriteOnce
   storageClassName: longhorn
   tcpdump:
-    claimName: oai-nrf-tcpdump
+    claimName: oai-ausf-tcpdump
     size: 1Gi
 
 resources:
@@ -59,14 +70,14 @@ resources:
     tcpdump:
       cpu: 100m
       memory: 128Mi
-    nrf:
+    ausf:
       cpu: 100m
       memory: 128Mi
   requests:
     tcpdump:
       cpu: 100m
       memory: 128Mi
-    nrf:
+    ausf:
       cpu: 100m
       memory: 128Mi
 

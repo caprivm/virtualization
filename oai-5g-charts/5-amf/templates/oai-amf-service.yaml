@@ -2,50 +2,38 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: oai-5gcn
-  name: oai-amf-svc-ngap
+  name: {{ .Chart.Name }}-svc-ngap
   labels:
-    helm.sh/chart: oai-amf-v1.5.0
-    app.kubernetes.io/name: oai-amf
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v1.5.0"
-    app.kubernetes.io/managed-by: Helm
+    {{- include "oai-amf.labels" . | nindent 4 }}
 spec:
-  type: NodePort
-  clusterIP: 10.233.35.154
+  type: {{ .Values.service.ngap.type }}
+  clusterIP: {{ .Values.service.ngap.clusterIP }}
   ports:
-    - name: oai-amf
-      port: 38412
-      targetPort: 38412
-      protocol: SCTP
-      nodePort: 30412
+  - name: oai-amf
+    port: {{ .Values.service.ngap.port }}
+    targetPort: 38412
+    protocol: SCTP
+    nodePort: {{ .Values.service.ngap.nodePort }}
   selector:
-    app.kubernetes.io/name: oai-amf
-    app.kubernetes.io/instance: release-name
+    {{- include "oai-amf.selectorLabels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: oai-5gcn
-  name: oai-amf-svc
+  name: {{ .Chart.Name }}-svc
   labels:
-    helm.sh/chart: oai-amf-v1.5.0
-    app.kubernetes.io/name: oai-amf
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v1.5.0"
-    app.kubernetes.io/managed-by: Helm
+    {{- include "oai-amf.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
-  clusterIP: 10.233.10.242
+  type: {{ .Values.service.type }}
+  clusterIP: {{ .Values.service.clusterIP }}
   ports:
     - name: http1
-      port: 80
+      port: {{ .Values.amfParameters.sbiPortHttp1 }}
       targetPort: 80
       protocol: TCP
     - name: http2
-      port: 8080
+      port: {{ .Values.amfParameters.sbiPortHttp2 }}
       targetPort: 8080
       protocol: TCP
   selector:
-    app.kubernetes.io/name: oai-amf
-    app.kubernetes.io/instance: release-name
+    {{- include "oai-amf.selectorLabels" . | nindent 4 }}

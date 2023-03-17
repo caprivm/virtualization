@@ -1,25 +1,8 @@
-# Source: oai-ausf/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: oai-5gcn
-  name: oai-ausf-configmap
+  name: {{ .Chart.Name }}-configmap
 data:
-  ausfName: "OAI_AUSF"
-  instanceId: "0"
-  nrfApiVersion: "v1"
-  nrfFqdn: "oai-nrf-svc"
-  nrfIpAddress: "10.233.19.104"
-  nrfPort: "80"
-  pidDirectory: "/var/run"
-  registerNrf: "yes"
-  sbiIfName: "eth0"
-  sbiPortHttp1: "80"
-  sbiPortHttp2: "8080"
-  tz: "Europe/Paris"
-  udmFqdn: "oai-udm-svc"
-  udmIpAddress: "10.233.58.64"
-  udmPort: "80"
-  udmVersionNb: "v1"
-  useFqdnDns: "no"
-  useHttp2: "no"
+  {{- range $key, $val := .Values.ausfConfig }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}

@@ -2,20 +2,19 @@
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  namespace: oai-5gcn
-  name: oai-amf-n2-net1
+  name: {{ .Chart.Name }}-n2-net1
 spec:
   config: '{
       "cniVersion": "0.3.1",
       "type": "macvlan",
       "mode": "bridge",
-      "master":"eno2.100",
+      "master": {{- cat .Values.multus.hostInterface | nospace | quote }},
         "ipam": {
-            "type": "static",
-            "addresses": [
-                  {
-                        "address":"172.21.10.6/22"
-                  }
+          "type": "static",
+          "addresses": [
+            {
+              "address": {{- cat .Values.multus.n2IpAdd "/" .Values.multus.n2Netmask | nospace | quote }}
+            }
           ]
         }
       }'

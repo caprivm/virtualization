@@ -3,7 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-configmap
 data:
-  {{- range $key, $val := .Values.config }}
+  {{- range $key, $val := .Values.udrConfig }}
   {{ $key }}: {{ $val | quote }}
   {{- end }}
-

@@ -1,2 +1,141 @@
 multus:
   create: false
+  hostInterface: "eno2.100"
+  n2IpAdd: "172.21.11.100"
+  n2Netmask: "22"
+  n2Gateway: "172.21.11.254"
+
+replicas: 1
+
+imagePullSecrets:
+  create: false
+  pullSecrets:
+    - name: ""
+
+start:
+  tcpdump: false
+  amf: true
+
+service:
+  type: ClusterIP
+  clusterIP: 10.233.10.242
+  ngap:
+    type: "NodePort"
+    clusterIP: 10.233.35.154
+    port: 38412
+    nodePort: 30412
+
+amfImage:
+  registry: docker.io
+  repository: oaisoftwarealliance/oai-amf
+  tag: v1.5.0
+  pullPolicy: IfNotPresent
+
+tcpdumpImage:
+  registry: docker.io
+  repository: corfr/tcpdump
+  tag: latest
+  pullPolicy: IfNotPresent
+
+amfConfig:
+  amfName: "oai-amf"
+  tz: "Europe/Paris"
+  instance: "0"
+  pidDirectory: "/var/run"
+  operatorKey: "C42449363BBAD02B66D16BC975D77CC1"
+
+amfParameters:
+  mcc: 001
+  mnc: 01
+  tac: 0x0001
+  regionId: 128
+  amfSetId: 1
+  amfPointer: 1
+  sst0: 1
+  sd0: 0x1
+  interfaceNameforNGAP: "eth0"
+  interfaceNameforSBI: "eth0"
+  sbiPortHttp1: 80
+  sbiPortHttp2: 8080
+  inteAlgoList: '[ "NIA1" , "NIA1" , "NIA2" ]'
+  ciphAlgoList: '[ "NEA0" , "NEA1" , "NEA2" ]'
+
+amfConnections:
+  useFqdnDNS: "no"
+  useHttp2: "no"
+  smf:
+    selection: "no"
+    ip: "10.233.95.120"
+    porthttp1: "80"
+    porthttp2: "8080"
+    fqdn: "oai-smf-svc"
+  nrf:
+    registration: "yes"
+    selection: "no"
+    external: "no"
+    ip: "10.233.19.104"
+    port: "80"
+    fqdn: "oai-nrf-svc"
+  ausf:
+    external: "yes"
+    ip: "10.233.28.39"
+    port: "80"
+    fqdn: "oai-ausf-svc"
+  udm:
+    external: "no"
+    ip: "10.233.58.64"
+    port: "80"
+    fqdn: "oai-udm-svc"
+  nssf:
+    external: "no"
+    ip: "127.0.0.1"
+    port: "80"
+    fqdn: "localhost"
+  mysql:
+    server: "mysql"
+    user: "root"
+    password: "linux"
+    db: "oai_db"
+
+serviceAccount:
+  enabled: true
+  name: "oai-amf-sa"
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+securityContext:
+  privileged: false
+
+persistence:
+  enabled: false
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  tcpdump:
+    claimName: oai-amf-tcpdump
+    size: 1Gi
+
+resources:
+  enabled: false
+  limits:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    amf:
+      cpu: 100m
+      memory: 128Mi
+  requests:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    amf:
+      cpu: 100m
+      memory: 128Mi
+
+readinessProbe: true
+livenessProbe: false
+terminationGracePeriodSeconds: 5
+nodeSelector: {}
+nodeName:

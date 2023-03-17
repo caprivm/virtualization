@@ -25,7 +25,7 @@ spec:
       {{- end }}
       containers:
       - name: tcpdump
-        image: "{{ .Values.tcpdumpImage.registry }}/{{ .Values.tcpdumpImage.repository }}:{{ .Values.tcpdumpImage.version }}"
+        image: "{{ .Values.tcpdumpImage.registry }}/{{ .Values.tcpdumpImage.repository }}:{{ .Values.tcpdumpImage.tag }}"
         imagePullPolicy: {{ .Values.tcpdumpImage.pullPolicy }}
         {{- if .Values.resources.enabled}}
         resources:
@@ -52,7 +52,7 @@ spec:
           name: tcpdump-5gcn-volume
         {{- end}}
       - name: nrf
-        image: "{{ .Values.nrfImage.registry }}/{{ .Values.nrfImage.repository }}:{{ .Values.nrfImage.version }}"
+        image: "{{ .Values.nrfImage.registry }}/{{ .Values.nrfImage.repository }}:{{ .Values.nrfImage.tag }}"
         imagePullPolicy: {{ .Values.nrfImage.pullPolicy }}
         {{- if .Values.resources.enabled}}
         resources:
@@ -131,12 +131,12 @@ spec:
       - name: tcpdump-5gcn-volume
         persistenceVolumeClaim:
           claimName: {{ .Values.persistence.tcpdump.claimName }}
-      {{-end}}
+      {{- end}}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       {{- if .Values.serviceAccount.enabled}}
       serviceAccountName: {{ .Values.serviceAccount.name }}
-      {{-end}}
+      {{- end}}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- if .Values.nodeSelector}}
       nodeSelector: 
