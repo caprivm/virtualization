@@ -3,14 +3,14 @@ kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-configmap
 data:
-  {{- range $key, $val := .Values.ausfConfig }}
+  {{- range $key, $val := .Values.amfConfig }}
   {{ $key }}: {{ $val | quote }}
   {{- end }}
   amfConfiguration: |
     AMF =
     {
       INSTANCE_ID = {{ .Values.amfConfig.instance }} ;            # 0 is the default
-      PID_DIRECTORY = "{{ .Values.amfConfig.pidDirectory }}";     # /var/run is the default
+      PID_DIRECTORY = "{{ .Values.amfConfig.pidDirectory }}";   # /var/run is the default
 
       AMF_NAME = "{{ .Values.amfConfig.amfName }}";
       
@@ -23,11 +23,11 @@ data:
       };
       GUAMI:
       {
-        MCC = "{{ .Values.amfParameters.mcc }}"; MNC = "{{ .Values.amfParameters.mnc }}"; RegionID = "{{ .Values.amfParameters.regionId }}"; AMFSetID = "{{ .Values.amfParameters.amfSetId }}"; AMFPointer = "{{ .Values.amfParameters.amfPointer }}"
+        MCC = "{{ .Values.amfParameters.mcc }}"; MNC = "{{ .Values.amfParameters.mnc }}"; RegionID = "{{ .Values.amfParameters.regionId }}"; AMFSetID = "{{ .Values.amfParameters.amfSetId }}"; AMFPointer = "{{ .Values.amfParameters.amfPointer.guami }}"
       }
 
       SERVED_GUAMI_LIST = (
-        {MCC = "{{ .Values.amfParameters.mcc }}"; MNC = "{{ .Values.amfParameters.mnc }}"; RegionID = "{{ .Values.amfParameters.regionId }}"; AMFSetID = "{{ .Values.amfParameters.amfSetId }}"; AMFPointer = "{{ .Values.amfParameters.amfPointer }}"}
+        {MCC = "{{ .Values.amfParameters.mcc }}"; MNC = "{{ .Values.amfParameters.mnc }}"; RegionID = "{{ .Values.amfParameters.regionId }}"; AMFSetID = "{{ .Values.amfParameters.amfSetId }}"; AMFPointer = "{{ .Values.amfParameters.amfPointer.guamiList }}"}
       );
 
       PLMN_SUPPORT_LIST = (
@@ -60,7 +60,7 @@ data:
           HTTP2_PORT     = {{ .Values.amfParameters.sbiPortHttp2 }};
 
           SMF_INSTANCES_POOL = (
-            {SMF_INSTANCE_ID = 1; IPV4_ADDRESS = "{{ .Values.amfConnections.smf.ip }}"; PORT = {{ .Values.amfConnections.smf.porthttp1 }}; HTTP2_PORT = {{ .Values.amfConnections.smf.porthttp2 }}, VERSION = "v1"; FQDN = "{{ .Values.amfConnections.smf.fqdn }}", SELECTED = "true"} # YOUR SMF CONFIG HERE
+            {SMF_INSTANCE_ID = 1; IPV4_ADDRESS = "{{ .Values.amfConnections.smf.ip }}"; PORT = "{{ .Values.amfConnections.smf.porthttp1 }}"; HTTP2_PORT = {{ .Values.amfConnections.smf.porthttp2 }}, VERSION = "v1"; FQDN = "{{ .Values.amfConnections.smf.fqdn }}", SELECTED = "true"} # YOUR SMF CONFIG HERE
           );
         };
 
@@ -100,24 +100,24 @@ data:
       SUPPORT_FEATURES:
       {
          # STRING, {"yes", "no"},
-         NF_REGISTRATION = "{{ .Values.amfConnections.nrfRegistration }}";  # Set to yes if AMF registers to an NRF
-         NRF_SELECTION   = "{{ .Values.amfConnections.nrf.selection }}";    # Set to yes to enable NRF discovery and selection
-         EXTERNAL_NRF    = "{{ .Values.amfConnections.nrf.external }}";     # Set to yes if AMF works with an external NRF
-         SMF_SELECTION   = "{{ .Values.amfConnections.smf.selection }}";    # Set to yes to enable SMF discovery and selection
-         EXTERNAL_AUSF   = "{{ .Values.amfConnections.ausf.external }}";    # Set to yes if AMF works with an external AUSF
-         EXTERNAL_UDM    = "{{ .Values.amfConnections.udm.external }}";     # Set to yes if AMF works with an external UDM
-         EXTERNAL_NSSF   = "{{ .Values.amfConnections.nssf.external }}";    # Set to yes if AMF works with an external NSSF
-         USE_FQDN_DNS    = "{{ .Values.amfConnections.useFqdnDNS }}";       # Set to yes if AMF relies on a DNS to resolve NRF/SMF/UDM/AUSF's FQDN
-         USE_HTTP2       = "{{ .Values.amfConnections.useHttp2 }}";         # Set to yes to enable HTTP2 for AMF server
+         NF_REGISTRATION = "{{ .Values.amfConnections.nrf.registration }}";  # Set to yes if AMF registers to an NRF
+         NRF_SELECTION   = "{{ .Values.amfConnections.nrf.selection }}";   # Set to yes to enable NRF discovery and selection
+         EXTERNAL_NRF    = "{{ .Values.amfConnections.nrf.external }}";   # Set to yes if AMF works with an external NRF
+         SMF_SELECTION   = "{{ .Values.amfConnections.smf.selection }}";   # Set to yes to enable SMF discovery and selection
+         EXTERNAL_AUSF   = "{{ .Values.amfConnections.ausf.external }}";  # Set to yes if AMF works with an external AUSF
+         EXTERNAL_UDM    = "{{ .Values.amfConnections.udm.external }}";   # Set to yes if AMF works with an external UDM
+         EXTERNAL_NSSF   = "{{ .Values.amfConnections.nssf.external }}";   # Set to yes if AMF works with an external NSSF
+         USE_FQDN_DNS    = "{{ .Values.amfConnections.useFqdnDNS }}";   # Set to yes if AMF relies on a DNS to resolve NRF/SMF/UDM/AUSF's FQDN
+         USE_HTTP2       = "{{ .Values.amfConnections.useHttp2 }}";   # Set to yes to enable HTTP2 for AMF server
       }
 
       AUTHENTICATION:
       {
         ## MySQL mandatory options
-        MYSQL_server = "{{ .Values.amfConnections.mysql.server }}";     # MySQL Server address
-        MYSQL_user   = "{{ .Values.amfConnections.mysql.user }}";       # Database server login
+        MYSQL_server = "{{ .Values.amfConnections.mysql.server }}";   # MySQL Server address
+        MYSQL_user   = "{{ .Values.amfConnections.mysql.user }}";    # Database server login
         MYSQL_pass   = "{{ .Values.amfConnections.mysql.password }}";   # Database server password
-        MYSQL_db     = "{{ .Values.amfConnections.mysql.db }}";         # Your database name
+        MYSQL_db     = "{{ .Values.amfConnections.mysql.db }}";  # Your database name
         RANDOM       = "true";
       };
 

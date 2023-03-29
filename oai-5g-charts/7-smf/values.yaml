@@ -1,2 +1,149 @@
 multus:
   create: false
+  hostInterface: "eno2.100"
+  n4IpAddress: "172.21.6.202"
+  n4Netmask: "22"
+  n4Gateway: "172.21.7.254"
+
+replicas: 1
+
+imagePullSecrets:
+  create: false
+  pullSecrets:
+    - name: ""
+
+start:
+  tcpdump: false
+  smf: true
+
+service:
+  type: ClusterIP
+  clusterIP: 10.233.42.105
+  port: 8805
+
+smfImage:
+  registry: docker.io
+  repository: oaisoftwarealliance/oai-smf
+  tag: v1.5.0
+  pullPolicy: IfNotPresent
+
+tcpdumpImage:
+  registry: docker.io
+  repository: corfr/tcpdump
+  tag: latest
+  pullPolicy: IfNotPresent
+
+smfConfig:
+  smfName: "oai-smf"
+  tz: "Europe/Paris"
+  instance: "0"
+  pidDirectory: "/var/run"
+
+smfParameters:
+  apiVersion: v1
+  defaultSessionType: "IPv4"
+  defaultSscMode: 1
+  dnn: "oai"
+  dnnRange1: "12.1.1.2 - 12.1.1.254"
+  dnnRange2: "12.2.1.41 - 12.2.1.254"
+  dnsDefaultCscf: "127.0.0.1"
+  dnsPrimary: "8.8.8.8"
+  dnsSecondary: "8.8.4.4"
+  interfaceNameForN4: "eth0"
+  interfaceNameForSBI: "eth0"
+  nssaiSd: "0x1"
+  nssaiSst: 1
+  pduSessionType: "IPv4"
+  qosProfile5QI: 1
+  qosProfilePriorityLevel: 1
+  qosProfileAppPriorityLevel: 15
+  qosProfileArpPreEmptCap: "NOT_PREEMPT"
+  qosProfileArpPreEmptVuln: "NOT_PREEMPTABLE"
+  sbiPortHttp1: 80
+  sbiPortHttp2: 8080
+  sessionAmbrDL: "1000Mbps"
+  sessionAmbrUL: "1000Mbps"
+  ueMtu: 1500
+
+smfConnections:
+  useLocalSubscriptionInfo: "yes"
+  useLocalPCCRules: "yes"
+  useFqdnDNS: "no"
+  useHttp2: "no"
+  amf:
+    apiVersion: v1
+    discover: "yes"
+    fqdn: "oai-amf-svc"
+    ip: "10.233.10.242"
+    port: "80"
+  smf:
+    ip: "10.233.95.120"
+    fqdn: "oai-smf-svc"
+  nrf:
+    registration: "yes"
+    apiVersion: v1
+    fqdn: "oai-nrf-svc"
+    ip: "10.233.19.104"
+    port: "80"
+  udm:
+    apiVersion: v1
+    fqdn: "oai-udm-svc"
+    ip: "10.233.58.64"
+    port: "80"
+  upf:
+    discover: "yes"
+    domainAccess: "none"
+    domainCore: "none"
+    fqdn: "oai-spgwu-tiny-svc"
+    ip: "10.233.45.210"
+    nssaiSst: 1
+    nssaiSd: "0x1"
+  pcf:
+    apiVersion: "v1"
+    discover: "no"
+    ip: "127.0.0.1"
+    port: "80"
+    fqdn: "localhost"
+
+serviceAccount:
+  enabled: true
+  name: "oai-smf-sa"
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+securityContext:
+  privileged: false
+
+persistence:
+  enabled: false
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  tcpdump:
+    claimName: oai-spgwu-tiny-tcpdump
+    size: 1Gi
+
+resources:
+  enabled: false
+  limits:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    smf:
+      cpu: 100m
+      memory: 128Mi
+  requests:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    smf:
+      cpu: 100m
+      memory: 128Mi
+
+readinessProbe: true
+livenessProbe: false
+terminationGracePeriodSeconds: 5
+nodeSelector: {}
+nodeName:

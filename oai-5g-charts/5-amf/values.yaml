@@ -1,7 +1,7 @@
 multus:
   create: false
   hostInterface: "eno2.100"
-  n2IpAdd: "172.21.11.100"
+  n2IpAddress: "172.21.11.100"
   n2Netmask: "22"
   n2Gateway: "172.21.11.254"
 
@@ -45,14 +45,16 @@ amfConfig:
   operatorKey: "C42449363BBAD02B66D16BC975D77CC1"
 
 amfParameters:
-  mcc: 001
-  mnc: 01
-  tac: 0x0001
+  mcc: "001"
+  mnc: "01"
+  tac: "0x0001"
   regionId: 128
   amfSetId: 1
-  amfPointer: 1
+  amfPointer:
+    guami: 1
+    guamiList: 0
   sst0: 1
-  sd0: 0x1
+  sd0: "0x1"
   interfaceNameforNGAP: "eth0"
   interfaceNameforSBI: "eth0"
   sbiPortHttp1: 80
@@ -65,7 +67,7 @@ amfConnections:
   useHttp2: "no"
   smf:
     selection: "no"
-    ip: "10.233.95.120"
+    ip: "10.233.95.126"
     porthttp1: "80"
     porthttp2: "8080"
     fqdn: "oai-smf-svc"

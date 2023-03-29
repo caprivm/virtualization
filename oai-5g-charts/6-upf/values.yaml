@@ -1,2 +1,120 @@
 multus:
   create: false
+  hostInterface: "eno2.100"
+  n3IpAddress: "172.21.11.100"
+  n3Netmask: "22"
+  n6Gateway: "172.21.11.254"
+
+replicas: 1
+
+imagePullSecrets:
+  create: false
+  pullSecrets:
+    - name: ""
+
+start:
+  tcpdump: false
+  upf: true
+
+service:
+  name: oai-spgwu-tiny-svc
+  type: ClusterIP
+  nguClusterIp: 10.233.45.210
+  nguPort: 2152
+  nguNodePort: 32152
+  pfcpClusterIp: 10.233.45.211
+  pfcpPort: 8805
+  
+upfImage:
+  registry: docker.io
+  repository: oaisoftwarealliance/oai-spgwu-tiny
+  tag: v1.5.0
+  pullPolicy: IfNotPresent
+
+tcpdumpImage:
+  registry: docker.io
+  repository: corfr/tcpdump
+  tag: latest
+  pullPolicy: IfNotPresent
+
+upfConfig:
+  upfName: "oai-spgwu-tiny"
+  tz: "Europe/Paris"
+  instance: "0"
+  pidDirectory: "/var/run"
+
+upfParameters:
+  byPassUlPfcpRules: "no"
+  dnn: "oai"
+  ueNatOption: "yes"
+  ueIpRange: "12.1.1.0/24"
+  ueIpRangeNatRules: "12.2.1.0/24"
+  interfaceNameForN3: "eth0"
+  interfaceNameForN4: "eth0"
+  interfaceNameForN6: "eth0"
+  threadsN3Priority: 98
+  threadsN4Priority: 88
+  threadsN6Priority: 99
+  threadsN3UL: 1
+  threadsN4UL: 1
+  threadsN6UL: 1
+
+upfConnections:
+  useFqdnDNS: "no"
+  useHttp2: "no"
+  smf:
+    ip: "10.233.42.105"
+    fqdn: "oai-smf-svc"
+  nrf:
+    registration: "yes"
+    ip: "10.233.19.104"
+    httpVersion: 1
+    apiVersion: v1
+    port: "80"
+    fqdn: "oai-nrf-svc"
+  upf:
+    nssaiSst: 1
+    nssaiSd: "0x1"
+
+serviceAccount:
+  enabled: true
+  name: "oai-spgwu-tiny"
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+
+securityContext:
+  privileged: true
+
+persistence:
+  enabled: false
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  tcpdump:
+    claimName: oai-spgwu-tiny-tcpdump
+    size: 1Gi
+
+resources:
+  enabled: false
+  limits:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    upf:
+      cpu: 100m
+      memory: 128Mi
+  requests:
+    tcpdump:
+      cpu: 100m
+      memory: 128Mi
+    upf:
+      cpu: 100m
+      memory: 128Mi
+
+readinessProbe: true
+livenessProbe: false
+terminationGracePeriodSeconds: 5
+nodeSelector: {}
+nodeName:

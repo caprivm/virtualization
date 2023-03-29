@@ -34,6 +34,7 @@ udrConfig:
   dbConnectionTimeout: "300"
   nrfApiVersion: "v1"
   nrfFqdn: "oai-nrf-svc"
+  nrfIpv4Address: "10.233.19.104"
   nrfPort: "80"
   pidDirectory: "/var/run"
   registerNrf: "yes"

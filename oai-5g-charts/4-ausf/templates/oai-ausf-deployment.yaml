@@ -63,7 +63,7 @@ spec:
             cpu: {{ .Values.resources.ausf.limits.cpu | quote }}
         {{- end}}
         securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.securityContext | nindent 12 }}
         {{- if .Values.readinessProbe}}
         readinessProbe:
           exec:
@@ -85,7 +85,7 @@ spec:
         ports:
         - containerPort: {{ .Values.ausfConfig.sbiPortHttp1 }}
           name: http1
-        - containerPort: {{ .Values.ausfConfig.sbiPortHttp1 }}
+        - containerPort: {{ .Values.ausfConfig.sbiPortHttp2 }}
           name: http2
         env:
           - name: TZ

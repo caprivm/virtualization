@@ -10,7 +10,7 @@ start:
 
 service:
   type: ClusterIP
-  clusterIP: 10.233.51.216
+  clusterIP: 10.233.28.39
 
 ausfImage:
   registry: docker.io

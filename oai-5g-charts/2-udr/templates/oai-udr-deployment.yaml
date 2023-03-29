@@ -63,7 +63,7 @@ spec:
             cpu: {{ .Values.resources.udr.limits.cpu | quote }}
         {{- end}}
         securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.securityContext | nindent 10 }}
         {{- if .Values.readinessProbe}}
         readinessProbe:
           exec:

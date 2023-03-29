@@ -1,34 +1,34 @@
-# Source: oai-smf/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: oai-5gcn
-  name: oai-smf-configmap
+  name: {{ .Chart.Name }}-configmap
 data:
-  smf.conf: |
+  {{- range $key, $val := .Values.smfConfig }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+  smfConfiguration: |
     SMF =
     {
-        FQDN          = "oai-smf";
-        INSTANCE      = 0;         # 0 is the default
-        PID_DIRECTORY = "/var/run";  # /var/run is the default
-
-        INTERFACES :
+        FQDN          = "{{ .Values.smfConfig.smfName }}";
+        INSTANCE      = {{ .Values.smfConfig.instance }};         # 0 is the default
+        PID_DIRECTORY = "{{ .Values.smfConfig.pidDirectory }}";  # /var/run is the default
+        INTERFACES:
         {
-            N4 :
+            N4:
             {
                 # SMF binded interface for N4 communication (UPF)
-                INTERFACE_NAME = "eth0"; # YOUR NETWORK CONFIG HERE
+                INTERFACE_NAME = "{{ .Values.smfParameters.interfaceNameForN4 }}"; # YOUR NETWORK CONFIG HERE
                 IPV4_ADDRESS   = "read";
              };
 
-            SBI :
+            SBI:
             {
                 # SMF binded interface for SBI interface (e.g., communication with AMF, UDM)
-                INTERFACE_NAME = "eth0";     # YOUR NETWORK CONFIG HERE
+                INTERFACE_NAME = "{{ .Values.smfParameters.interfaceNameForSBI }}";     # YOUR NETWORK CONFIG HERE
                 IPV4_ADDRESS   = "read";
-                PORT           = 80;       # YOUR NETWORK CONFIG HERE (default: 80)
-                HTTP2_PORT     = 8080;     # YOUR NETWORK CONFIG HERE
-                API_VERSION    = "v1";     # YOUR SMF API VERSION CONFIG HERE
+                PORT           = {{ .Values.smfParameters.sbiPortHttp1 }};       # YOUR NETWORK CONFIG HERE (default: 80)
+                HTTP2_PORT     = {{ .Values.smfParameters.sbiPortHttp2 }};     # YOUR NETWORK CONFIG HERE
+                API_VERSION    = "{{ .Values.smfParameters.apiVersion }}";     # YOUR SMF API VERSION CONFIG HERE
              };
 
         };
@@ -39,86 +39,86 @@ data:
         DNN_LIST = (
            # PDU_SESSION_TYPE choice in {IPv4, IPv6, IPv4v6}
            # DNN IP ADDRESS RANGE format is for example: "12.2.1.2 - 12.2.1.128"
-          {DNN_NI = "oai"; PDU_SESSION_TYPE = "IPv4"; IPV4_RANGE = "12.1.1.2 - 12.1.1.254"; IPV6_PREFIX = "2001:1:2::/64"},
-          {DNN_NI = "oai"; PDU_SESSION_TYPE = "IPv4"; IPV4_RANGE = "12.2.1.41 - 12.2.1.254"; IPV6_PREFIX = "3001:1:2::/64"}
+          {DNN_NI = "{{ .Values.smfParameters.dnn }}"; PDU_SESSION_TYPE = "{{ .Values.smfParameters.pduSessionType }}"; IPV4_RANGE = "{{ .Values.smfParameters.dnnRange1 }}"; IPV6_PREFIX = "2001:1:2::/64"},
+          {DNN_NI = "{{ .Values.smfParameters.dnn }}"; PDU_SESSION_TYPE = "{{ .Values.smfParameters.pduSessionType }}"; IPV4_RANGE = "{{ .Values.smfParameters.dnnRange2 }}"; IPV6_PREFIX = "3001:1:2::/64"}
         );
 
         # DNS address communicated to UEs
-        DEFAULT_DNS_IPV4_ADDRESS     = "8.8.8.8";      # YOUR DNS CONFIG HERE
-        DEFAULT_DNS_SEC_IPV4_ADDRESS = "4.4.4.4";  # YOUR DNS CONFIG HERE
+        DEFAULT_DNS_IPV4_ADDRESS     = "{{ .Values.smfParameters.dnsPrimary }}";      # YOUR DNS CONFIG HERE
+        DEFAULT_DNS_SEC_IPV4_ADDRESS = "{{ .Values.smfParameters.dnsSecondary }}";  # YOUR DNS CONFIG HERE
         # IPV6 tunnels are not supported
         DEFAULT_DNS_IPV6_ADDRESS     = "2001:4860:4860::8888";            # YOUR DNS CONFIG HERE
         DEFAULT_DNS_SEC_IPV6_ADDRESS = "2001:4860:4860::8844";            # YOUR DNS CONFIG HERE
 
         #Default P-CSCF server
-        DEFAULT_CSCF_IPV4_ADDRESS = "127.0.0.1";
+        DEFAULT_CSCF_IPV4_ADDRESS = "{{ .Values.smfParameters.dnsDefaultCscf }}";
         DEFAULT_CSCF_IPV6_ADDRESS = "fe80::7915:f408:1787:db8b";
 
-        #Default UE MTU
-        UE_MTU = 1500;
+        # DEFAULT UE MTU
+        UE_MTU = {{ .Values.smfParameters.ueMtu }};
 
         # SUPPORT FEATURES
         SUPPORT_FEATURES:
         {
           # STRING, {"yes", "no"},
-          REGISTER_NRF = "yes";  # Set to yes if SMF resgisters to an NRF
-          DISCOVER_UPF = "yes";  # Set to yes to enable UPF discovery and selection
-          DISCOVER_PCF = "no";  # Set to yes to enable PCF discovery and selection
+          REGISTER_NRF = "{{ .Values.smfConnections.nrf.registration }}";  # Set to yes if SMF resgisters to an NRF
+          DISCOVER_UPF = "{{ .Values.smfConnections.upf.discover }}";  # Set to yes to enable UPF discovery and selection
+          DISCOVER_PCF = "{{ .Values.smfConnections.pcf.discover }}";  # Set to yes to enable PCF discovery and selection
           FORCE_PUSH_PROTOCOL_CONFIGURATION_OPTIONS = "no"; # Non standard feature, normally should be set to "no",
                                                             # but you may need to set to yes for UE that do not explicitly request a PDN address through NAS signalling
-          USE_LOCAL_SUBSCRIPTION_INFO = "yes";  # Set to yes if SMF uses local subscription information instead of from an UDM
-          USE_LOCAL_PCC_RULES = "yes";  # Set to yes if SMF uses local PCC rules instead of from an PCF
-          USE_FQDN_DNS = "no";                  # Set to yes if AMF/UDM/NRF/UPF will relying on a DNS to resolve FQDN
+          USE_LOCAL_SUBSCRIPTION_INFO = "{{ .Values.smfConnections.useLocalSubscriptionInfo }}";  # Set to yes if SMF uses local subscription information instead of from an UDM
+          USE_LOCAL_PCC_RULES = "{{ .Values.smfConnections.useLocalPCCRules }}";  # Set to yes if SMF uses local PCC rules instead of from an PCF
+          USE_FQDN_DNS = "{{ .Values.smfConnections.useFqdnDNS }}";                  # Set to yes if AMF/UDM/NRF/UPF will relying on a DNS to resolve FQDN
           HTTP_VERSION = 1;                    # Default: 1
         }
 
         AMF :
         {
-          IPV4_ADDRESS = "10.233.10.242";  # YOUR AMF CONFIG HERE
-          PORT         =  80;    # YOUR AMF CONFIG HERE (default: 80)
-          API_VERSION  = "v1";   # YOUR AMF API VERSION FOR SBI CONFIG HERE
-          FQDN         = "oai-amf-svc"         # YOUR AMF FQDN CONFIG HERE
+          IPV4_ADDRESS = "{{ .Values.smfConnections.amf.ip }}";  # YOUR AMF CONFIG HERE
+          PORT         =  {{ .Values.smfConnections.amf.port }};    # YOUR AMF CONFIG HERE (default: 80)
+          API_VERSION  = "{{ .Values.smfConnections.amf.apiVersion }}";   # YOUR AMF API VERSION FOR SBI CONFIG HERE
+          FQDN         = "{{ .Values.smfConnections.amf.fqdn }}"         # YOUR AMF FQDN CONFIG HERE
         };
 
         UDM :
         {
-          IPV4_ADDRESS = "10.233.58.64";  # YOUR UDM CONFIG HERE
-          PORT         =  80;   # YOUR UDM CONFIG HERE (default: 80)
-          API_VERSION  = "v1";   # YOUR UDM API VERSION FOR SBI CONFIG HERE
-          FQDN         = "oai-udm-svc"           # YOUR UDM FQDN CONFIG HERE
+          IPV4_ADDRESS = "{{ .Values.smfConnections.udm.ip }}";  # YOUR UDM CONFIG HERE
+          PORT         =  {{ .Values.smfConnections.udm.port }};   # YOUR UDM CONFIG HERE (default: 80)
+          API_VERSION  = "{{ .Values.smfConnections.udm.apiVersion }}";   # YOUR UDM API VERSION FOR SBI CONFIG HERE
+          FQDN         = "{{ .Values.smfConnections.udm.fqdn }}"           # YOUR UDM FQDN CONFIG HERE
         };
 
         NRF :
         {
-          IPV4_ADDRESS = "10.233.19.104";  # YOUR NRF CONFIG HERE
-          PORT         =  80;            # YOUR NRF CONFIG HERE (default: 80)
-          API_VERSION  = "v1";   # YOUR NRF API VERSION FOR SBI CONFIG HERE
-          FQDN         = "oai-nrf-svc"           # YOUR NRF FQDN CONFIG HERE
+          IPV4_ADDRESS = "{{ .Values.smfConnections.nrf.ip }}";  # YOUR NRF CONFIG HERE
+          PORT         =  {{ .Values.smfConnections.nrf.port }};            # YOUR NRF CONFIG HERE (default: 80)
+          API_VERSION  = "{{ .Values.smfConnections.nrf.apiVersion }}";   # YOUR NRF API VERSION FOR SBI CONFIG HERE
+          FQDN         = "{{ .Values.smfConnections.nrf.fqdn }}"           # YOUR NRF FQDN CONFIG HERE
         };
 
         PCF :
         {
-          IPV4_ADDRESS = "127.0.0.1";  # YOUR PCF CONFIG HERE
-          PORT         =  80;           # YOUR PCF CONFIG HERE (default: 80)
-          API_VERSION  = "v1";   # YOUR PCF API VERSION FOR SBI CONFIG HERE
-          FQDN         = "localhost"           # YOUR PCF FQDN CONFIG HERE
+          IPV4_ADDRESS = "{{ .Values.smfConnections.pcf.ip }}";  # YOUR PCF CONFIG HERE
+          PORT         =  {{ .Values.smfConnections.pcf.port }};           # YOUR PCF CONFIG HERE (default: 80)
+          API_VERSION  = "{{ .Values.smfConnections.pcf.apiVersion }}";   # YOUR PCF API VERSION FOR SBI CONFIG HERE
+          FQDN         = "{{ .Values.smfConnections.pcf.fqdn }}"           # YOUR PCF FQDN CONFIG HERE
         };
 
         UPF_LIST = (
-             {IPV4_ADDRESS = "10.233.45.210";
-             FQDN = "oai-spgwu-tiny-svc"; NWI_LIST = ({DOMAIN_ACCESS  = "none",
-             DOMAIN_CORE = "none"})}   # YOUR UPF CONFIG HERE
+             {IPV4_ADDRESS = "{{ .Values.smfConnections.upf.ip }}";
+             FQDN = "{{ .Values.smfConnections.upf.fqdn }}"; NWI_LIST = ({DOMAIN_ACCESS  = "{{ .Values.smfConnections.upf.domainAccess }}",
+             DOMAIN_CORE = "{{ .Values.smfConnections.upf.domainCore }}"})}   # YOUR UPF CONFIG HERE
         );                                                               # NWI_LIST IS OPTIONAL PARAMETER
 
         LOCAL_CONFIGURATION :
         {
           SESSION_MANAGEMENT_SUBSCRIPTION_LIST = (
-             { NSSAI_SST = 1, NSSAI_SD = "0x1", DNN = "oai", DEFAULT_SESSION_TYPE = "IPv4", DEFAULT_SSC_MODE = 1,
-               QOS_PROFILE_5QI = 1, QOS_PROFILE_PRIORITY_LEVEL = 1, QOS_PROFILE_ARP_PRIORITY_LEVEL = 15, QOS_PROFILE_ARP_PREEMPTCAP = "NOT_PREEMPT",
-               QOS_PROFILE_ARP_PREEMPTVULN = "NOT_PREEMPTABLE", SESSION_AMBR_UL = "1000Mbps", SESSION_AMBR_DL = "1000Mbps"},
-             { NSSAI_SST = 1, NSSAI_SD = "0x1", DNN = "oai", DEFAULT_SESSION_TYPE = "IPv4", DEFAULT_SSC_MODE = 1,
-               QOS_PROFILE_5QI = 1, QOS_PROFILE_PRIORITY_LEVEL = 1, QOS_PROFILE_ARP_PRIORITY_LEVEL = 15, QOS_PROFILE_ARP_PREEMPTCAP = "NOT_PREEMPT",
-               QOS_PROFILE_ARP_PREEMPTVULN = "NOT_PREEMPTABLE", SESSION_AMBR_UL = "1000Mbps", SESSION_AMBR_DL = "1000Mbps"}
+             { NSSAI_SST = {{ .Values.smfParameters.nssaiSst }}, NSSAI_SD = "{{ .Values.smfParameters.nssaiSd }}", DNN = "{{ .Values.smfParameters.dnn }}", DEFAULT_SESSION_TYPE = "{{ .Values.smfParameters.defaultSessionType }}", DEFAULT_SSC_MODE = {{ .Values.smfParameters.defaultSscMode }},
+               QOS_PROFILE_5QI = {{ .Values.smfParameters.qosProfile5QI }}, QOS_PROFILE_PRIORITY_LEVEL = {{ .Values.smfParameters.qosProfilePriorityLevel }}, QOS_PROFILE_ARP_PRIORITY_LEVEL = {{ .Values.smfParameters.qosProfileAppPriorityLevel }}, QOS_PROFILE_ARP_PREEMPTCAP = "{{ .Values.smfParameters.qosProfileArpPreEmptCap }}",
+               QOS_PROFILE_ARP_PREEMPTVULN = "{{ .Values.smfParameters.qosProfileArpPreEmptVuln }}", SESSION_AMBR_UL = "{{ .Values.smfParameters.sessionAmbrDL }}", SESSION_AMBR_DL = "{{ .Values.smfParameters.sessionAmbrUL }}"},
+             { NSSAI_SST = {{ .Values.smfParameters.nssaiSst }}, NSSAI_SD = "{{ .Values.smfParameters.nssaiSd }}", DNN = "{{ .Values.smfParameters.dnn }}", DEFAULT_SESSION_TYPE = "{{ .Values.smfParameters.defaultSessionType }}", DEFAULT_SSC_MODE = {{ .Values.smfParameters.defaultSscMode }},
+               QOS_PROFILE_5QI = {{ .Values.smfParameters.qosProfile5QI }}, QOS_PROFILE_PRIORITY_LEVEL = {{ .Values.smfParameters.qosProfilePriorityLevel }}, QOS_PROFILE_ARP_PRIORITY_LEVEL = {{ .Values.smfParameters.qosProfileAppPriorityLevel }}, QOS_PROFILE_ARP_PREEMPTCAP = "{{ .Values.smfParameters.qosProfileArpPreEmptCap }}",
+               QOS_PROFILE_ARP_PREEMPTVULN = "{{ .Values.smfParameters.qosProfileArpPreEmptVuln }}", SESSION_AMBR_UL = "{{ .Values.smfParameters.sessionAmbrDL }}", SESSION_AMBR_DL = "{{ .Values.smfParameters.sessionAmbrUL }}"}
             );
         };
     };

@@ -28,7 +28,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- if .Values.imagePullSecrets.create }}
       imagePullSecrets:
-      - name: regcred
+        {{ toYaml .Values.imagePullSecrets.pullSecrets | indent 8 }}
       {{- end }}
       containers:
       - name: tcpdump
@@ -61,7 +61,7 @@ spec:
           name: tcpdump-5gcn-volume
         {{- end}}
       - name: amf
-        image: "{{ .Values.amfImage.registry }}/{{ .Values.amfImage.repository }}:{{ .Values.amfImage.version }}"
+        image: "{{ .Values.amfImage.registry }}/{{ .Values.amfImage.repository }}:{{ .Values.amfImage.tag }}"
         imagePullPolicy: {{ .Values.amfImage.pullPolicy }}
         volumeMounts:
           - mountPath: /openair-amf/etc
@@ -76,7 +76,7 @@ spec:
             cpu: {{ .Values.resources.amf.limits.cpu | quote }}
         {{- end}}
         securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.securityContext | nindent 12 }}
         {{- if .Values.readinessProbe}}
         readinessProbe:
           exec:

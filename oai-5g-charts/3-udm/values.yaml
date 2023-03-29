@@ -10,7 +10,7 @@ start:
 
 service:
   type: ClusterIP
-  clusterIP: 10.233.51.216
+  clusterIP: 10.233.58.64
 
 udmImage:
   registry: docker.io
@@ -82,7 +82,7 @@ resources:
       cpu: 100m
       memory: 128Mi
 
-readinessProbe: true
+readinessProbe: false
 livenessProbe: false
 terminationGracePeriodSeconds: 5
 nodeSelector: {}

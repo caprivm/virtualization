@@ -13,7 +13,7 @@ spec:
           "type": "static",
           "addresses": [
             {
-              "address": {{- cat .Values.multus.n2IpAdd "/" .Values.multus.n2Netmask | nospace | quote }}
+              "address": {{- cat .Values.multus.n2IpAddress "/" .Values.multus.n2Netmask | nospace | quote }}
             }
           ]
         }
