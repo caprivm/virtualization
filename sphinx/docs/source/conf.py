@@ -1,7 +1,7 @@
 import os
 import sys
 
-basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "application"))
+basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, basedir)
 
 # Configuration file for the Sphinx documentation builder.
@@ -13,7 +13,7 @@ sys.path.insert(0, basedir)
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "Sphinx Example"
-copyright = "2023, Juan Caviedes"
+copyright = "2024, Juan Caviedes"
 author = "Juan Caviedes"
 
 # -- General configuration ---------------------------------------------------
@@ -25,7 +25,9 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = ["application.module2.*"]
+
+language = "en"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

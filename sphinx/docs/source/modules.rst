@@ -1,9 +1,8 @@
-application
-===========
+sphinx
+======
 
 .. toctree::
    :maxdepth: 4
 
-   module1
-   module2
-   utils
+   application
+   main

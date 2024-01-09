@@ -1,5 +1,5 @@
-module1 package
-===============
+application.utils package
+=========================
 
 Submodules
 ----------
@@ -7,12 +7,12 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   module1.arithmetic_operations
+   application.utils.check_if_number_is_prime
 
 Module contents
 ---------------
 
-.. automodule:: module1
+.. automodule:: application.utils
    :members:
    :undoc-members:
    :show-inheritance:
