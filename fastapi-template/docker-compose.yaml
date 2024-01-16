@@ -1,0 +1,73 @@
+version: "3.9"
+name: fastapi-application
+services:
+  rabbitmq:
+    image: rabbitmq:3
+    container_name: rabbitmq
+    restart: unless-stopped
+    env_file:
+      - ./environment/.env
+    expose:
+      - "$RABBITMQ_PORT"
+    ports:
+      - "$RABBITMQ_PORT:$RABBITMQ_PORT"
+    networks:
+      - fastapi_network
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - ./envitonment/.env
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD:$POSTGRES_PASSWORD
+    expose:
+      - "$POSTGRES_PORT"
+    ports:
+      - "$POSTGRES_PORT:$POSTGRES_PORT"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fastapi_network
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    restart: unless-stopped
+    env_file:
+      - ./environment/.env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME:$MONGODB_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD:$MONGODB_INITDB_ROOT_PASSWORD
+    expose:
+      - "$MONGODB_PORT"
+    ports:
+      - "$MONGODB_PORT:$MONGODB_PORT"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - fastapi_network
+  fastapi-application:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: fastapi-application:latest
+    init: true
+    container_name: fastapi-application
+    env_file:
+      - ./environment/.env
+    hostname: fastapi-application
+    networks:
+      - fastapi_network
+    expose:
+      - "8001"
+      - "8002"
+    ports:
+      - 8001:8001
+      - 8002:8002
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  mongo_data:
+networks:
+  fastapi_network:

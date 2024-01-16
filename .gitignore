@@ -1,0 +1,5 @@
+venv
+fastapi-venv
+sonar-project.properties
+.DS_Store
+__pycache__

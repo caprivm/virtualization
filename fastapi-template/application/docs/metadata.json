@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Health",
+        "description": "Endpoint to check the health of the application. The endpoint check for the status of the MongoDB and Postgres databases."
+    },
+    {
+        "name": "Items",
+        "description": "Endpoint to perform CRUD operations on Items in the Postgres database."
+    },
+    {
+        "name": "Math",
+        "description": "Endpoint to perform math operations on two numbers."
+    }
+]

@@ -1,0 +1,30 @@
+---
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  simple:
+    format: "[%(asctime)s] [%(levelname)s] %(module)s - %(message)s"
+
+handlers:
+  console_handler:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+    filters: [sensitive_info]
+  file_handler:
+    class: logging.FileHandler
+    filename: logs/fastapi.log
+    level: DEBUG
+    formatter: simple
+    filters: [sensitive_info]
+
+filters:
+  sensitive_info:
+    (): config.logging.SensitiveInfoFilter
+    sensitive_words: [password, secret, username, user, token, key]
+
+root:
+  level: DEBUG
+  handlers: [console_handler, file_handler]

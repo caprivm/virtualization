@@ -1,0 +1,1 @@
+FastAPI project template. Ready to use in production environments! :rocket:
