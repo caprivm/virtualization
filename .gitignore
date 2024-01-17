@@ -1,4 +1,5 @@
 venv
+cleancode-venv
 fastapi-venv
 sonar-project.properties
 .DS_Store

@@ -15,7 +15,7 @@ class SettingsPostgres(BaseSettings):
     postgres_user: str = os.getenv("POSTGRES_USERNAME", "postgres")
     postgres_password: str = os.getenv("POSTGRES_PASSWORD", "postgres")
     postgres_db: str = os.getenv("POSTGRES_DB", "fastapi-data")
-    db_echo_log: bool = os.getenv("POSRGRES_ECHO_LOG", False)
+    db_echo_log: str | bool = os.getenv("POSRGRES_ECHO_LOG", False)
 
     @property
     def sync_database_url(self) -> str:

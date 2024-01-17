@@ -20,7 +20,7 @@ services:
       - "9090:9090"
     volumes:
       - prometheus_data:/prometheus
-      - ./application/config/monitoring/prometheus/prometheus.yml:/workspace/prometheus.yml:ro
+      - ./monitoring/prometheus/prometheus.yml:/workspace/prometheus.yml:ro
     command:
       - --config.file=/workspace/prometheus.yml
       - --enable-feature=exemplar-storage
@@ -58,9 +58,9 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./application/config/monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
-      - ./application/config/monitoring/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
-      - ./application/config/monitoring/grafana/fastapi-application-observability-dashboard.json:/etc/grafana/dashboards/fastapi-application-observability-dashboard.json:rw
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./monitoring/grafana/fastapi-application-observability-dashboard.json:/etc/grafana/dashboards/fastapi-application-observability-dashboard.json:rw
     networks:
       - fastapi_network
     depends_on:
