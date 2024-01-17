@@ -1,3 +1,14 @@
+x-logging: &default-logging
+  driver: loki
+  options:
+    loki-url: 'http://localhost:3100/api/prom/push'
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<time>\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2},d{3}) (?P<message>(?s:.*))$$'
+
 version: "3.9"
 name: fastapi-application
 services:
@@ -8,10 +19,22 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./application/config/monitoring/prometheus.yml:/workspace/prometheus.yml
+      - prometheus_data:/prometheus
+      - ./application/config/monitoring/prometheus/prometheus.yml:/workspace/prometheus.yml:ro
     command:
       - --config.file=/workspace/prometheus.yml
       - --enable-feature=exemplar-storage
+    networks:
+      - fastapi_network
+    depends_on:
+      - loki
+    logging: *default-logging
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: loki
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
     networks:
       - fastapi_network
   tempo:
@@ -24,14 +47,25 @@ services:
       - "4318:4318"
     networks:
       - fastapi_network
+    depends_on:
+      - loki
+    logging: *default-logging
   grafana:
     image: grafana/grafana:10.2.3
     container_name: grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./application/config/monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./application/config/monitoring/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./application/config/monitoring/grafana/fastapi-application-observability-dashboard.json:/etc/grafana/dashboards/fastapi-application-observability-dashboard.json:rw
     networks:
       - fastapi_network
+    depends_on:
+      - loki
+    logging: *default-logging
   rabbitmq:
     image: rabbitmq:3.10.7
     container_name: rabbitmq
@@ -97,8 +131,13 @@ services:
     restart: unless-stopped
     networks:
       - fastapi_network
+    depends_on:
+      - loki
+    logging: *default-logging
 volumes:
   postgres_data:
   mongo_data:
+  grafana_data:
+  prometheus_data:
 networks:
   fastapi_network:
