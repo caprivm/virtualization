@@ -22,7 +22,7 @@ handlers:
 
 filters:
   sensitive_info:
-    (): config.logging.SensitiveInfoFilter
+    (): config.config_logging.SensitiveInfoFilter
     sensitive_words: [password, secret, username, user, token, key]
 
 root:

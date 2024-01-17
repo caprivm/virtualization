@@ -1,6 +1,7 @@
+from config.config_limiter import limiter
 from db.db_mongodb import get_db as mongodb_get_db
-from db.db_postgres import get_db as postgres_get_db
-from fastapi import APIRouter
+from db.db_postgres import session_local as postgres_get_db
+from fastapi import APIRouter, Request
 from sqlalchemy import exc, text
 import platform
 import psutil
@@ -12,7 +13,8 @@ router = APIRouter()
 
 
 @router.get("", include_in_schema=True)
-def health():
+@limiter.limit("4/second")
+def health(request: Request):
     # Get MongoDB status
     mongo_db_details = ""
     try:

@@ -9,12 +9,12 @@ class SensitiveInfoFilter(logging.Filter):
     A filter to mask sensitive information in log messages.
     """
 
-    def __init__(self, sensitive_words: list[str]):
+    def __init__(self, sensitive_words):
         """
         Function to initialize the filter.
 
         :param sensitive_words: Sensitive words to mask.
-        :type sensitive_words: list[str]
+        :type sensitive_words: Any
         """
         super().__init__()
         self.sensitive_words = sensitive_words

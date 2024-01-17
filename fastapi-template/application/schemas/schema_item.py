@@ -1,23 +1,23 @@
 from models.model_item import Item as DBItem
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 
 class Item(BaseModel):
     id: int
-    name: str
-    description: Optional[str] = None
+    name: str = Field(default="Notebook", max_length=255)
+    description: Optional[str] = Field(default="Death Note", max_length=255)
 
 
 class ItemCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: str = Field(default="Notebook", max_length=255)
+    description: Optional[str] = Field(default="Death Note", max_length=255)
 
 
 class ItemUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
+    name: Optional[str] = Field(default="Notebook to patch", max_length=255)
+    description: Optional[str] = Field(default="New notebook", max_length=255)
 
 
 def read_db_item(item_id: int, session: Session, offset: int = 0, limit: int = 10000) -> DBItem:

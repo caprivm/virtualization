@@ -47,14 +47,16 @@ echo "DEBUG: SSL_ENABLED: $SSL_ENABLED"
 
 # Celery Execution
 rm -rf /var/run/celery/*
-# celery multi start 5 -A config.celery worker -l INFO --logfile=/code/logs/celery.log -O fair -Q:1-3 celery -Q:4-5 monitor -D && \
-celery multi start -A config.config_celery worker --pool=gevent --concurrency=500 -l INFO --logfile=/code/logs/celery.log -O fair -Q celery,monitor -D && \
-celery -A config.celery.app flower --port=8002 --loglevel=info --logfile=/code/logs/flower.log --basic-auth=admin:noa123 -D &
+# celery -A config.config_celery worker --pool=gevent --concurrency=500 --loglevel=INFO --logfile=/code/logs/celery.log -O fair -Q celery &
+celery -A config.config_celery worker --loglevel=INFO --logfile=/code/logs/celery.log -O fair -Q celery &
+sleep 5
+celery -A config.config_celery.app flower --port=8002 --loglevel=INFO --logfile=/code/logs/flower.log --basic-auth=admin:admin -D &
 
 # FastAPI Execution
 if [[ $SSL_ENABLED == true ]]; then
   echo "DEBUG: Running the application on HTTPS"
   uvicorn main:app --host=0.0.0.0 --reload --port=8001 --ssl-keyfile ../certificates/certificate-key.pem --ssl-certfile ../certificates/certificate-cert.pem
 else
+  echo "DEBUG: Running the application on HTTP"
   uvicorn main:app --host=0.0.0.0 --reload --port=8001
 fi

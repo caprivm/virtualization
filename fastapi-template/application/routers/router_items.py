@@ -26,7 +26,7 @@ def read_item(request: Request, item_id: int, db: Session = Depends(get_db)) -> 
     return Item(**db_item.__dict__)
 
 
-@router.post("/")
+@router.post("")
 @limiter.limit("1/second")
 def create_item(request: Request, item: ItemCreate, db: Session = Depends(get_db)) -> Item:
     db_item = create_db_item(item, db)

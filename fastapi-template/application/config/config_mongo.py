@@ -16,7 +16,7 @@ class SettingsMongo:
     app_settings = {
         "db_name": os.getenv("MONGODB_DB", "fastapi-data"),
         "mongodb_host": os.getenv("MONGODB_HOSTNAME", "mongodb"),
-        "mongodb_port": os.getenv("MONGODB_PORT", 27017),
+        "mongodb_port": int(os.getenv("MONGODB_PORT", 27017)),
         "username": os.getenv("MONGODB_USERNAME", ""),
         "password": os.getenv("MONGODB_PASSWORD", ""),
         "max_pool_size": os.getenv("MONGODB_MAX_POOL_SIZE", 10),
@@ -30,4 +30,4 @@ class SettingsMongo:
                 logging.error(f"Config variable error. {k} cannot be None")
                 raise InternalError([{"message": "Server configure error"}])
             else:
-                logging.info(f"Config variable {k} is {v}")
+                logging.info(f"Config variable {str(k)} is {str(v)}")

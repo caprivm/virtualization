@@ -32,3 +32,8 @@ Examples:
 
 In the variable `mongodb_client` you will have the connection to the Mongo database. You can use this variable to perform operations on the database.
 """
+
+from __future__ import absolute_import
+from config.config_celery import app as celery_app
+
+__all__ = ["celery_app"]

@@ -1,6 +1,5 @@
 from datetime import datetime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID
 from typing import Optional
 import pytz
 from sqlalchemy.ext.declarative import declarative_base
