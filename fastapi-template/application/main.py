@@ -7,8 +7,15 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from routers import router_db_health, router_items, router_add_numbers
 from schemas.schema_error import BadRequest, UnprocessableError
+from opentelemetry.propagate import inject
+from utils.util_opentelemetry import PrometheusMiddleware, metrics, setting_otlp
 import json
 import logging
+import os
+
+APP_NAME = os.environ.get("FASTAPI_APP_NAME", "app")
+OTLP_GRPC_ENDPOINT = os.environ.get("FASTAPI_OTLP_GRPC_ENDPOINT", "http://tempo:4317")
+TARGET_ONE_HOST = os.environ.get("FASTAPI_TARGET_ONE_HOST", "app-a")
 
 tags_metadata = open("docs/metadata.json", "r")
 description = open("docs/documentation.md", "r")
@@ -38,6 +45,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Setting metrics middleware
+app.add_middleware(PrometheusMiddleware, app_name=APP_NAME)
+app.add_route("/metrics", metrics)
+
+# Setting OpenTelemetry exporter
+setting_otlp(app, APP_NAME, OTLP_GRPC_ENDPOINT)
+
+
+class EndpointFilter(logging.Filter):
+    # Uvicorn endpoint access log filter
+    def filter(self, record: logging.LogRecord) -> bool:
+        return record.getMessage().find("GET /metrics") == -1
+
+
+# Filter out /endpoint
+logging.getLogger("uvicorn.access").addFilter(EndpointFilter())
 
 
 @app.exception_handler(BadRequest)

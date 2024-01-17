@@ -1,6 +1,37 @@
 version: "3.9"
 name: fastapi-application
 services:
+  prometheus:
+    image: prom/prometheus:v2.49.1
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./application/config/monitoring/prometheus.yml:/workspace/prometheus.yml
+    command:
+      - --config.file=/workspace/prometheus.yml
+      - --enable-feature=exemplar-storage
+    networks:
+      - fastapi_network
+  tempo:
+    image: grafana/tempo:2.3.1
+    container_name: tempo
+    restart: unless-stopped
+    command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - fastapi_network
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - fastapi_network
   rabbitmq:
     image: rabbitmq:3.10.7
     container_name: rabbitmq
@@ -8,13 +39,7 @@ services:
     env_file:
       - ./environment/.env
     expose:
-      - "5671"
-      - "5672"
-      - "4369"
-      - "15691"
-      - "15692"
-      - "25672"
-      - "15672"
+      - "$RABBITMQ_PORT"
     networks:
       - fastapi_network
     volumes:
