@@ -11,6 +11,7 @@ router = APIRouter()
 
 
 @router.post("", include_in_schema=True)
+@limiter.limit("1/second")
 def add_numbers(request: Request, x: int, y: int) -> JSONResponse:
     logger.info("Adding {0} + {1}".format(str(x), str(y)))
     try:
@@ -21,6 +22,7 @@ def add_numbers(request: Request, x: int, y: int) -> JSONResponse:
 
 
 @router.get("/{task_id}")
+@limiter.limit("1/second")
 async def get_status(task_id: str) -> JSONResponse:
     logger.info("Getting status of task {0}".format(task_id))
     try:

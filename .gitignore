@@ -4,3 +4,5 @@ fastapi-venv
 sonar-project.properties
 .DS_Store
 __pycache__
+.mypy_cache
+.ruff_cache

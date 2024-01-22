@@ -20,7 +20,7 @@ def get_db(db_client: MongoClient = mongodb_client):
     return db_client[db_name]
 
 
-def close_db_connect(db_client: MongoClient = mongodb_client):
+def close_db_connect(db_client: MongoClient = mongodb_client) -> None:
     if db_client is None:
         logging.warning("Connection is None, nothing to close.")
         return

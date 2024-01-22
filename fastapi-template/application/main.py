@@ -7,7 +7,6 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from routers import router_db_health, router_items, router_add_numbers
 from schemas.schema_error import BadRequest, UnprocessableError
-from opentelemetry.propagate import inject
 from utils.util_opentelemetry import PrometheusMiddleware, metrics, setting_otlp
 import json
 import logging
@@ -94,7 +93,7 @@ app.include_router(router_add_numbers.router, prefix="/add", tags=["Math"])
 
 
 @app.get("/", response_class=RedirectResponse, status_code=302, include_in_schema=False)
-async def redirect_tim():
+async def redirect_tim() -> RedirectResponse:
     response = RedirectResponse(url="/docs")
     return response
 

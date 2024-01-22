@@ -2,6 +2,7 @@ from config.config_limiter import limiter
 from db.db_mongodb import get_db as mongodb_get_db
 from db.db_postgres import session_local as postgres_get_db
 from fastapi import APIRouter, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy import exc, text
 import platform
 import psutil
@@ -14,7 +15,10 @@ router = APIRouter()
 
 @router.get("", include_in_schema=True)
 @limiter.limit("4/second")
-def health(request: Request):
+def health(request: Request) -> JSONResponse:
+    """
+    API to get the status of the application and the system. You can get a JSON response with the status of the MongoDB and Postgres databases, and the system information.
+    """
     # Get MongoDB status
     mongo_db_details = ""
     try:
@@ -44,8 +48,10 @@ def health(request: Request):
         "disk": psutil.disk_usage("/")._asdict(),
     }
 
-    return {
-        "mongodb": {"status": mongo_db_status, "details": mongo_db_details},
-        "postgres": {"status": postgres_db_status, "details": postgres_db_details},
-        "system_info": system_info,
-    }
+    return JSONResponse(
+        {
+            "mongodb": {"status": mongo_db_status, "details": mongo_db_details},
+            "postgres": {"status": postgres_db_status, "details": postgres_db_details},
+            "system_info": system_info,
+        }
+    )

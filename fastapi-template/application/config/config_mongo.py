@@ -24,7 +24,7 @@ class SettingsMongo:
     }
 
     @classmethod
-    def app_settings_validate(cls):
+    def app_settings_validate(cls) -> None:
         for k, v in cls.app_settings.items():
             if None is v:
                 logging.error(f"Config variable error. {k} cannot be None")

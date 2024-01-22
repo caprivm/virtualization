@@ -17,7 +17,7 @@ Examples:
 
     .. code-block:: python
         :linenos:
-            
+
         mongodb_client = MongoClient(
             host=SettingsMongo.app_settings.get("mongodb_host"),
             port=SettingsMongo.app_settings.get("mongodb_port"),
